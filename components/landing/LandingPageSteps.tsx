@@ -14,7 +14,7 @@ const LandingPageSteps: React.FC = () => {
           steps.map((step, index) => (
             <div
               key={index}
-              className="bg-[var(--color-light-gray)] col-span-12 md:col-span-4 rounded-4xl"
+              className="bg-(--color-light-gray) col-span-12 md:col-span-4 rounded-4xl"
             >
               <div className="p-5 flex flex-col min-[519px]:flex-row md:flex-col h-full gap-6">
                 <div className="basis-1/2">

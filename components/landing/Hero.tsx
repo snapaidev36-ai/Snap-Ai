@@ -9,7 +9,7 @@ const Hero: React.FC = () => {
     <div className="w-full text-center py-8">
       {/* Header section */}
       <div className="flex justify-center mb-4">
-        <div className="rounded-full w-11 h-11 theme-greenBgClass flex items-center justify-center">
+        <div className="rounded-full w-11 h-11 bg-[rgb(197_255_103/var(--tw-bg-opacity,1))] flex items-center justify-center">
           <Image
             src="/icons/star-06.svg"
             alt="Star Icon"
@@ -18,7 +18,7 @@ const Hero: React.FC = () => {
           />
         </div>
         <div className="rounded-full h-11 bg-[#F1F1F1] flex items-center justify-center px-8">
-          <h1 className="text-sm font-semibold">snap-ai Generator</h1>
+          <h1 className="text-sm font-semibold">Snap-Ai Generator</h1>
         </div>
       </div>
 
@@ -42,13 +42,13 @@ const Hero: React.FC = () => {
       <div className="flex gap-2 justify-center mt-6 lg:mt-8 xl:mt-10 relative z-10">
         <Button
           onClick={() => console.log("Auth check")}
-          // className="h-12 theme-greenBgClass hover:brightness-95 rounded-full w-40 font-bold text-white"
+          className="h-12 bg-[rgb(197_255_103/var(--tw-bg-opacity,1))]  rounded-full w-40 font-bold text-black"
         >
           Start now
         </Button>
         <Button
           onClick={() => console.log("Navigate to create AI image page")}
-          // className="h-12 theme-blackBgClass rounded-full w-40 font-bold hover:opacity-80 text-white"
+          className="h-12 bg-black  rounded-full w-40 font-bold text-white"
         >
           Create AI Image
         </Button>

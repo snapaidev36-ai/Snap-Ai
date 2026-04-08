@@ -59,6 +59,7 @@ const Header: React.FC<AiHeader2Props> = ({}) => {
             onClick={() => {
               console.log("Toggle menu");
             }}
+            className="bg-[rgb(197_255_103/var(--tw-bg-opacity,1))] text-black"
           >
             {"Start now"}
           </Button>
