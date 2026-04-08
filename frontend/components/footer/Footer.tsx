@@ -51,10 +51,6 @@ const Footer: React.FC<FooterProps> = ({ ImageTools = [] }) => {
 
   const paymentIcons: { key: string; icon: React.ReactNode }[] = [
     {
-      key: "visa",
-      icon: "/icons/Visa.svg",
-    },
-    {
       key: "apple",
       icon: "/icons/ApplePay.svg",
     },
@@ -125,9 +121,6 @@ const Footer: React.FC<FooterProps> = ({ ImageTools = [] }) => {
 
             {Object.values(socialLinks || {}).some(Boolean) && (
               <>
-                <h4 className="font-bold text-base lg:text-xl mt-8">
-                  {"Stay Tuned"}
-                </h4>
                 <div className="flex gap-2 mt-5">
                   {icons.map(({ key, svg }) => {
                     const link = socialLinks?.[key as keyof typeof socialLinks];
