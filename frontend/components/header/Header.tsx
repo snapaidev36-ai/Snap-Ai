@@ -38,10 +38,10 @@ const Header: React.FC<AiHeader2Props> = ({}) => {
           <div className="col-span-6 hidden lg:block">
             <ul className="flex gap-12 justify-center font-semibold">
               <li>
-                <Link href="#">{"Discover"}</Link>
+                <Link href="/discover">{"Discover"}</Link>
               </li>
               <li>
-                <Link href="#">{"Pricing"}</Link>
+                <Link href="/pricing">{"Pricing"}</Link>
               </li>
               <li>
                 <Link href="#">{"Blog"}</Link>
