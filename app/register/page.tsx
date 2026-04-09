@@ -1,12 +1,12 @@
 import Footer from "@/components/footer/Footer";
-import Hero from "@/components/discover/Hero";
 import Header from "@/components/header/Header";
+import RegisterForm from "@/components/auth/Register"; // Renamed to avoid conflict with page component
 
-export default function Discover() {
+export default function Register() {
   return (
     <main>
       <Header />
-      <Hero />
+      <RegisterForm />
       <Footer />
     </main>
   );
