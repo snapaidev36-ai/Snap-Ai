@@ -36,6 +36,16 @@ The app validates env variables at startup in lib/env.ts.
 - ACCESS_TOKEN_EXPIRES_IN: Access token lifetime, default 1h.
 - REFRESH_TOKEN_EXPIRES_IN: Refresh token lifetime, default 7d.
 - BCRYPT_SALT_ROUNDS: Password hash cost, default 12.
+- NEXT_PUBLIC_FIREBASE_API_KEY: Firebase web API key.
+- NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: Firebase auth domain.
+- NEXT_PUBLIC_FIREBASE_PROJECT_ID: Firebase web project ID.
+- NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: Firebase storage bucket.
+- NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: Firebase sender id.
+- NEXT_PUBLIC_FIREBASE_APP_ID: Firebase web app id.
+- NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: Firebase analytics measurement id.
+- FIREBASE_PROJECT_ID: Firebase Admin project id.
+- FIREBASE_CLIENT_EMAIL: Firebase Admin service account client email.
+- FIREBASE_PRIVATE_KEY: Firebase Admin service account private key.
 
 ## Prisma + MongoDB
 
@@ -102,6 +112,23 @@ Behavior:
 - Clears accessToken and refreshToken cookies.
 - Returns success response.
 
+### POST /api/auth/firebase/google
+
+Body:
+
+{
+"idToken": "<firebase-id-token>"
+}
+
+Behavior:
+
+- Verifies Firebase ID token with firebase-admin.
+- Auto-links with existing user by email if found.
+- Creates user if not found.
+- Keeps email/password flow active.
+- Issues accessToken and refreshToken as HttpOnly cookies.
+- Returns redirectTo as /dashboard.
+
 ## Middleware Auth Protection
 
 - Protected paths:
@@ -119,6 +146,18 @@ Behavior:
 - Actions call auth route handlers for register, login, refresh, and logout.
 - Server components can call route handlers with lib/server/api.ts.
 - For client components, use the lightweight fetch wrapper in lib/client/api.ts.
+- For Google client auth handoff, use lib/client/firebase.ts helper.
+
+## Firebase And GCP Checklist
+
+- Create Firebase project in Google Cloud.
+- Enable Firebase Authentication and turn on Google provider.
+- Add localhost and production domains under Firebase authorized domains.
+- Configure OAuth consent screen in Google Cloud.
+- Create Firebase web app and copy NEXT_PUBLIC Firebase values.
+- Generate Firebase Admin service account credentials.
+- Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY in .env.
+- Ensure FIREBASE_PRIVATE_KEY uses escaped newlines when stored in env (\\n).
 
 ## Useful Commands
 

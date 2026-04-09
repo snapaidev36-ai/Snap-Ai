@@ -3,8 +3,10 @@
 import { cookies, headers } from 'next/headers';
 
 import {
+  firebaseGoogleLoginSchema,
   loginSchema,
   registerSchema,
+  type FirebaseGoogleLoginInput,
   type LoginInput,
   type RegisterInput,
 } from '@/lib/validation/auth';
@@ -247,5 +249,35 @@ export async function refreshSessionAction() {
 export async function logoutAction() {
   return callAuthRoute<{ message: string }>('/api/auth/logout', {
     method: 'POST',
+  });
+}
+
+export async function loginWithGoogleAction(payload: FirebaseGoogleLoginInput) {
+  const parsed = firebaseGoogleLoginSchema.safeParse(payload);
+
+  if (!parsed.success) {
+    return {
+      ok: false,
+      status: 400,
+      error: 'Validation failed',
+      fields: parsed.error.flatten().fieldErrors,
+    } satisfies ActionResult<never>;
+  }
+
+  return callAuthRoute<{
+    message: string;
+    redirectTo: string;
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      credits: number;
+      createdAt: string;
+    };
+  }>('/api/auth/firebase/google', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(parsed.data),
   });
 }
