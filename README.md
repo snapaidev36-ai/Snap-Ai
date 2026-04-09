@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Snap AI
 
-## Getting Started
+Next.js 16 app with Prisma + MongoDB auth foundation.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Install dependencies.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   npm install
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Create your environment file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   cp .env.example .env
 
-## Learn More
+3. Fill in all values in .env.
 
-To learn more about Next.js, take a look at the following resources:
+4. Generate Prisma client.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   npm run prisma:generate
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. Push schema to MongoDB.
 
-## Deploy on Vercel
+   npm run prisma:push
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+6. Start development server.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   npm run dev
+
+## Environment Variables
+
+The app validates env variables at startup in lib/env.ts.
+
+- DATABASE_URL: MongoDB connection string.
+- JWT_ACCESS_SECRET: Secret for access token signing, minimum 32 chars.
+- JWT_REFRESH_SECRET: Secret for refresh token signing, minimum 32 chars.
+- ACCESS_TOKEN_EXPIRES_IN: Access token lifetime, default 1h.
+- REFRESH_TOKEN_EXPIRES_IN: Refresh token lifetime, default 7d.
+- BCRYPT_SALT_ROUNDS: Password hash cost, default 12.
+
+## Prisma + MongoDB
+
+- Prisma provider is mongodb in prisma/schema.prisma.
+- User model includes:
+  - firstName
+  - lastName
+  - email (unique)
+  - password (hashed)
+  - credits
+- Indexes:
+  - unique email index
+  - credits index
+  - compound lastName + firstName index
+
+## Auth API
+
+### POST /api/auth/register
+
+Body:
+
+{
+"firstName": "Jane",
+"lastName": "Doe",
+"email": "jane@example.com",
+"password": "StrongPass123"
+}
+
+Behavior:
+
+- Validates and sanitizes body with Zod.
+- Creates user with hashed password.
+- Returns 201 with safe user payload.
+- Does not issue tokens on register.
+
+### POST /api/auth/login
+
+Body:
+
+{
+"email": "jane@example.com",
+"password": "StrongPass123"
+}
+
+Behavior:
+
+- Validates and sanitizes body with Zod.
+- Verifies credentials.
+- Sets accessToken (1h) as HttpOnly cookie.
+- Sets refreshToken (7d) as HttpOnly cookie.
+
+### POST /api/auth/refresh
+
+Behavior:
+
+- Validates refreshToken cookie.
+- Issues a fresh accessToken cookie when refreshToken is valid.
+- Clears auth cookies and returns 401 if refresh token is invalid or expired.
+
+### POST /api/auth/logout
+
+Behavior:
+
+- Clears accessToken and refreshToken cookies.
+- Returns success response.
+
+## Middleware Auth Protection
+
+- Protected paths:
+  - /dashboard/:path\*
+  - /profile/:path\*
+  - /gallery/:path\*
+- middleware.ts applies route protection.
+- Middleware checks accessToken first.
+- If accessToken is expired, middleware issues a new accessToken from refreshToken.
+- If refreshToken is missing, invalid, or expired, middleware clears auth cookies and redirects to /login.
+
+## Server Actions First
+
+- Server actions are implemented in app/actions/auth.ts.
+- Actions call auth route handlers for register, login, refresh, and logout.
+- Server components can call route handlers with lib/server/api.ts.
+- For client components, use the lightweight fetch wrapper in lib/client/api.ts.
+
+## Useful Commands
+
+- npm run prisma:validate
+- npm run prisma:generate
+- npm run prisma:push
+- npm run prisma:studio
+- npm run lint
+- npm run build
