@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   clearAuthCookies,
   REFRESH_TOKEN_COOKIE_NAME,
+  setAuthHintCookie,
   setAccessTokenCookie,
 } from '@/lib/auth/cookies';
 import { issueAccessTokenFromRefresh } from '@/lib/auth/refresh';
@@ -25,6 +26,7 @@ export async function POST(request: NextRequest) {
 
     const response = NextResponse.json({ message: 'Session refreshed' });
     setAccessTokenCookie(response, accessToken);
+    setAuthHintCookie(response);
     response.headers.set('Cache-Control', 'no-store');
 
     return response;
