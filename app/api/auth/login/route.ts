@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import {
+  setAuthHintCookie,
   setAccessTokenCookie,
   setRefreshTokenCookie,
 } from '@/lib/auth/cookies';
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
 
     setAccessTokenCookie(response, accessToken);
     setRefreshTokenCookie(response, refreshToken);
+    setAuthHintCookie(response);
     response.headers.set('Cache-Control', 'no-store');
 
     return response;
