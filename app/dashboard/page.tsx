@@ -1,17 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@/components/ui/button';
+import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
+import GreetingHero from '@/components/dashboard/GreetingHero';
+import PromptComposer from '@/components/dashboard/PromptComposer';
 import { apiClient } from '@/lib/client/api';
 import { useAuthStore } from '@/lib/store/auth-store';
 
 export default function DashboardPage() {
   const router = useRouter();
   const clearUser = useAuthStore(state => state.clearUser);
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const persistedState = window.localStorage.getItem(
+      'dashboard-sidebar-collapsed',
+    );
+
+    setIsSidebarCollapsed(persistedState === '1');
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      'dashboard-sidebar-collapsed',
+      isSidebarCollapsed ? '1' : '0',
+    );
+  }, [isSidebarCollapsed]);
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -33,26 +54,37 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className='min-h-screen bg-slate-50 px-4 py-12'>
-      <div className='mx-auto w-full max-w-4xl rounded-xl border border-slate-200 bg-white p-8 shadow-sm'>
-        <h1 className='text-3xl font-semibold text-slate-900'>Dashboard</h1>
-        <p className='mt-3 text-slate-600'>
-          You are signed in successfully. This page is protected by middleware.
-        </p>
+    <main className='min-h-screen bg-background'>
+      <div className='flex min-h-screen'>
+        <DashboardSidebar
+          collapsed={isSidebarCollapsed}
+          onCollapsedChange={setIsSidebarCollapsed}
+          mobileOpen={isMobileSidebarOpen}
+          onMobileOpenChange={setIsMobileSidebarOpen}
+        />
 
-        <Button
-          className='mt-6'
-          variant='outline'
-          onClick={handleLogout}
-          disabled={isLoggingOut}>
-          {isLoggingOut ? 'Logging out...' : 'Logout'}
-        </Button>
+        <div className='flex min-h-screen flex-1 flex-col'>
+          <DashboardHeader
+            onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+            onLogout={handleLogout}
+            isLoggingOut={isLoggingOut}
+          />
 
-        {errorMessage ? (
-          <p className='mt-3 text-sm text-red-600' role='alert'>
-            {errorMessage}
-          </p>
-        ) : null}
+          <div className='flex-1 px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6'>
+            <div className='mx-auto flex w-full max-w-5xl flex-col gap-5 sm:gap-6'>
+              {errorMessage ? (
+                <p
+                  className='rounded-lg border border-destructive/25 bg-destructive/10 px-3 py-2 text-sm text-destructive'
+                  role='alert'>
+                  {errorMessage}
+                </p>
+              ) : null}
+
+              <GreetingHero />
+              <PromptComposer />
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );
