@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Mic, Send } from 'lucide-react';
+import { sectionContainer, fadeUp, slideDown } from '@/lib/motion/variants';
 
 import {
   ASPECT_RATIO_OPTIONS,
@@ -85,6 +87,8 @@ export default function PromptComposer() {
     getClientSnapshot,
     getServerSnapshot,
   );
+
+  const prefersReducedMotion = useReducedMotion();
 
   const isVoiceSupported =
     isClient &&
@@ -183,23 +187,28 @@ export default function PromptComposer() {
   }
 
   return (
-    <section className='space-y-3'>
+    <motion.section
+      className='space-y-3'
+      variants={prefersReducedMotion ? undefined : sectionContainer}>
       <div className='flex flex-wrap items-center gap-2'>
         <span className='text-sm font-medium text-foreground'>
           Recent prompts:
         </span>
         {RECENT_PROMPTS.map(prompt => (
-          <button
+          <motion.button
             key={prompt}
             type='button'
             onClick={() => appendPromptFromChip(prompt)}
+            variants={prefersReducedMotion ? undefined : fadeUp}
             className='bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full px-3 py-1 text-xs transition-colors'>
             {prompt}
-          </button>
+          </motion.button>
         ))}
       </div>
 
-      <div className='overflow-hidden rounded-2xl border bg-card shadow-sm'>
+      <motion.div
+        variants={prefersReducedMotion ? undefined : slideDown}
+        className='overflow-hidden rounded-2xl border bg-card shadow-sm'>
         <div className='space-y-4 p-4 sm:p-5'>
           <div className='space-y-2'>
             <label
@@ -287,7 +296,7 @@ export default function PromptComposer() {
             </p>
           </div>
         </div>
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 }
