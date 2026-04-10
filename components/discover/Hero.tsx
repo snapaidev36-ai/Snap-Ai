@@ -2,15 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-
-const galleryImages: string[] = [
-  "https://picsum.photos/300/400?1",
-  "https://picsum.photos/300/400?2",
-  "https://picsum.photos/300/400?3",
-  "https://picsum.photos/300/400?4",
-  "https://picsum.photos/300/400?5",
-  "https://picsum.photos/300/400?6",
-];
+import { Button } from "../ui/button";
+import { Download } from "lucide-react";
 
 const Hero: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -24,71 +17,41 @@ const Hero: React.FC = () => {
     setLoading(false);
   };
 
+  const images = Array.from({ length: 25 }, (_, i) => `/discover/${i + 1}.png`);
+
   return (
-    <div className="w-full pt-20 px-4 md:px-8">
+    <div className="w-full pt-5 ">
       {/* HERO */}
-      <section>
-        <div className="max-w-[1100px] mx-auto">
-          <div className=" text-start lg:text-left">
-            <h1 className="font-bold text-3xl lg:text-4xl xl:text-[3.5rem] leading-tight">
-              Unlock the World of AI
-            </h1>
+      <section className="relative w-full">
+        <Image
+          src="/discover/discover-hero.png"
+          width={1920}
+          height={900}
+          alt="Hero"
+          priority
+          className="w-full h-auto"
+        />
 
-            <p className="mt-4 text-gray-500">
-              Explore an endless gallery of AI-generated images and ideas.
-            </p>
+        <div className="absolute hidden inset-0 lg:flex items-start">
+          <div className="max-w-[1300px] mx-auto w-full px-4">
+            <div className="max-w-xl">
+              <h1 className="md:text-[32px] md:leading-[30px] lg:leading-[55px] md:pt-14 lg:pt-0 lg:text-6xl font-bold text-black">
+                Unlock the World of <br className="hidden md:flex" />{" "}
+                AI-Generated Art
+              </h1>
+              <p className="hidden lg:flex mt-1 lg:mt-4 text-[15px] xl:text-2xl font-normal text-gray-500">
+                Explore an endless, AI-generated images for every need.
+              </p>
 
-            <button className="h-12 bg-green-500 hover:opacity-90 text-white rounded-full w-[180px] font-bold mt-6">
-              Start Discovering
-            </button>
+              {/* <Button className="mt-10 rounded-[60px] font-normal w-[150px] text-[16px] h-12 p-2">
+                Start Discovering
+              </Button> */}
+              <Button className="h-12 bg-[#C5FF67] text-black hover:brightness-95 rounded-full w-40 mx-auto min-[600px]:mx-0 font-bold mt-5 md:mt-[4vw] xl:mt-[3vw]">
+                Start Discovering
+              </Button>
+            </div>
           </div>
         </div>
-
-        <Image
-          src="/discover/discover-hero.jpg"
-          width={1200}
-          height={600}
-          alt="Hero"
-          className="mt-[-100px] mx-10 rounded-xl"
-        />
-      </section>
-
-      {/* STEPS */}
-      <section className="mt-14">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl lg:text-3xl font-bold">
-            One Platform to Create Anything
-          </h2>
-          <p className="text-gray-500 mt-2">
-            From idea to reality in three simple steps
-          </p>
-        </div>
-
-        {/* <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-[1100px] mx-auto">
-          {[
-            {
-              title: "Generate Your Idea",
-              desc: "Let AI turn your vision into reality.",
-              img: "https://picsum.photos/300/200?1",
-            },
-            {
-              title: "Customize Output",
-              desc: "Adjust styles and refine your results.",
-              img: "https://picsum.photos/300/200?2",
-            },
-            {
-              title: "Download & Share",
-              desc: "Download high-quality images instantly.",
-              img: "https://picsum.photos/300/200?3",
-            },
-          ].map((item, i) => (
-            <div key={i} className="bg-gray-100 p-4 rounded-3xl">
-              <h3 className="font-bold text-xl mb-2">{item.title}</h3>
-              <p className="mb-4 text-gray-600">{item.desc}</p>
-              <Image src={item.img} width={300} height={200} alt="" />
-            </div>
-          ))}
-        </div> */}
       </section>
 
       {/* GALLERY */}
@@ -98,26 +61,28 @@ const Hero: React.FC = () => {
           <p className="text-gray-500 mt-2">Discover AI-generated creations</p>
         </div>
 
-        {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-5 max-w-[1100px] mx-auto">
-          {galleryImages.map((img, index) => (
-            <div key={index} className="relative h-[250px]">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 max-w-[1300px] mx-auto">
+          {images.map((src, index) => (
+            <div
+              key={index}
+              className="group relative w-full aspect-square overflow-hidden rounded-xl"
+            >
               <Image
-                src={img}
-                alt=""
+                src={src}
+                alt={`Gallery ${index + 1}`}
                 fill
-                className="rounded-2xl object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
 
               <button
-                onClick={() => handleDownload(img)}
-                disabled={loading}
-                className="absolute right-3 top-3 w-10 h-10 rounded-full bg-black/30 text-white flex items-center justify-center hover:bg-black/50"
+                onClick={() => handleDownload(src)}
+                className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition"
               >
-                ⬇
+                <Download size={16} />
               </button>
             </div>
           ))}
-        </div> */}
+        </div>
       </section>
     </div>
   );
