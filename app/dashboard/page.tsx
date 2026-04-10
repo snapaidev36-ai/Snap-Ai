@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
@@ -14,25 +14,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const clearUser = useAuthStore(state => state.clearUser);
 
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    const persistedState = window.localStorage.getItem(
-      'dashboard-sidebar-collapsed',
-    );
-
-    setIsSidebarCollapsed(persistedState === '1');
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem(
-      'dashboard-sidebar-collapsed',
-      isSidebarCollapsed ? '1' : '0',
-    );
-  }, [isSidebarCollapsed]);
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -56,16 +39,10 @@ export default function DashboardPage() {
   return (
     <main className='h-dvh overflow-hidden bg-background'>
       <div className='flex h-dvh'>
-        <DashboardSidebar
-          collapsed={isSidebarCollapsed}
-          onCollapsedChange={setIsSidebarCollapsed}
-          mobileOpen={isMobileSidebarOpen}
-          onMobileOpenChange={setIsMobileSidebarOpen}
-        />
+        <DashboardSidebar />
 
         <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
           <DashboardHeader
-            onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
             onLogout={handleLogout}
             isLoggingOut={isLoggingOut}
           />

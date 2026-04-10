@@ -15,9 +15,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import DashboardBreadcrumbs from '@/components/dashboard/DashboardBreadcrumbs';
 import { useAuthStore } from '@/lib/store/auth-store';
+import { useSidebarStore } from '@/lib/store/sidebar-store';
 
 type DashboardHeaderProps = {
-  onOpenMobileSidebar: () => void;
   onLogout: () => Promise<void>;
   isLoggingOut: boolean;
 };
@@ -50,11 +50,11 @@ function getInitials(firstName?: string, lastName?: string) {
 }
 
 export default function DashboardHeader({
-  onOpenMobileSidebar,
   onLogout,
   isLoggingOut,
 }: DashboardHeaderProps) {
   const user = useAuthStore(state => state.user);
+  const openMobileSidebar = useSidebarStore(state => state.openMobileSidebar);
 
   const credits = user?.credits ?? 0;
   const firstName = user?.firstName || 'Creator';
@@ -72,7 +72,7 @@ export default function DashboardHeader({
             size='icon'
             aria-label='Open sidebar'
             className='md:hidden'
-            onClick={onOpenMobileSidebar}>
+            onClick={openMobileSidebar}>
             <Menu className='size-4' />
           </Button>
 
