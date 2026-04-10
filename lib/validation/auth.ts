@@ -42,5 +42,12 @@ export const loginSchema = z.object({
     .max(72, 'Password is too long'),
 });
 
+export const firebaseGoogleLoginSchema = z.object({
+  idToken: z.string().min(1, 'Firebase ID token is required'),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type FirebaseGoogleLoginInput = z.infer<
+  typeof firebaseGoogleLoginSchema
+>;

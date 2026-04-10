@@ -20,6 +20,34 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z
     .string()
     .min(32, 'JWT_REFRESH_SECRET must be at least 32 characters'),
+  FIREBASE_PROJECT_ID: z
+    .string()
+    .min(1, 'FIREBASE_PROJECT_ID is required for firebase-admin'),
+  FIREBASE_CLIENT_EMAIL: z
+    .string()
+    .min(1, 'FIREBASE_CLIENT_EMAIL is required for firebase-admin'),
+  FIREBASE_PRIVATE_KEY: z
+    .string()
+    .min(1, 'FIREBASE_PRIVATE_KEY is required for firebase-admin'),
+  NEXT_PUBLIC_FIREBASE_API_KEY: z
+    .string()
+    .min(1, 'NEXT_PUBLIC_FIREBASE_API_KEY is required'),
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: z
+    .string()
+    .min(1, 'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN is required'),
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID: z
+    .string()
+    .min(1, 'NEXT_PUBLIC_FIREBASE_PROJECT_ID is required'),
+  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: z
+    .string()
+    .min(1, 'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET is required'),
+  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: z
+    .string()
+    .min(1, 'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID is required'),
+  NEXT_PUBLIC_FIREBASE_APP_ID: z
+    .string()
+    .min(1, 'NEXT_PUBLIC_FIREBASE_APP_ID is required'),
+  NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: z.string().optional(),
   ACCESS_TOKEN_EXPIRES_IN: z.string().default('1h'),
   REFRESH_TOKEN_EXPIRES_IN: z.string().default('7d'),
   BCRYPT_SALT_ROUNDS: z.coerce.number().int().min(10).max(15).default(12),

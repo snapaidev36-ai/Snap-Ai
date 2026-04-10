@@ -8,15 +8,18 @@ datasource db {
 }
 
 model User {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    firstName String
-    lastName  String
-    email     String   @unique
-    password  String
-    credits   Int      @default(0)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id           String   @id @default(auto()) @map("_id") @db.ObjectId
+    firstName    String
+    lastName     String
+    email        String   @unique
+    password     String?
+    firebaseUid  String?  @unique
+    authProvider String   @default("email")
+    credits      Int      @default(0)
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 
     @@index([credits])
     @@index([lastName, firstName])
+    @@index([authProvider])
 }

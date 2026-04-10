@@ -36,12 +36,13 @@ export async function POST(request: Request) {
         lastName: true,
         email: true,
         password: true,
+        authProvider: true,
         credits: true,
         createdAt: true,
       },
     });
 
-    if (!user) {
+    if (!user || !user.password) {
       return jsonError('Invalid email or password', 401);
     }
 
