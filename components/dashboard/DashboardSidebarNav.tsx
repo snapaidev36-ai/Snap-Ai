@@ -9,21 +9,29 @@ import { cn } from '@/lib/utils';
 
 type DashboardSidebarNavProps = {
   pathname: string;
+  collapsed?: boolean;
+  shouldAnimate?: boolean;
   mode?: 'desktop' | 'mobile';
 };
 
 export default function DashboardSidebarNav({
   pathname,
+  collapsed: collapsedOverride,
+  shouldAnimate: shouldAnimateOverride,
   mode = 'desktop',
 }: DashboardSidebarNavProps) {
   const prefersReducedMotion = useReducedMotion();
-  const collapsed = useSidebarStore(state => state.collapsed);
-  const hasInteracted = useSidebarStore(state => state.hasInteracted);
+  const collapsedFromStore = useSidebarStore(state => state.collapsed);
+  const hasInteractedFromStore = useSidebarStore(state => state.hasInteracted);
   const closeMobileSidebar = useSidebarStore(state => state.closeMobileSidebar);
 
   const animateDesktop = mode === 'desktop';
-  const compact = animateDesktop ? collapsed : false;
-  const shouldAnimate = animateDesktop && hasInteracted;
+  const compact = animateDesktop
+    ? (collapsedOverride ?? collapsedFromStore)
+    : false;
+  const shouldAnimate = animateDesktop
+    ? (shouldAnimateOverride ?? hasInteractedFromStore)
+    : false;
 
   const subtleTransition =
     prefersReducedMotion || !shouldAnimate

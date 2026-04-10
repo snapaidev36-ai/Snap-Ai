@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,12 +13,27 @@ import { Button } from '@/components/ui/button';
 import { useSidebarStore } from '@/lib/store/sidebar-store';
 import { cn } from '@/lib/utils';
 
-export default function DashboardSidebar() {
+type DashboardSidebarProps = {
+  initialCollapsed: boolean;
+};
+
+export default function DashboardSidebar({
+  initialCollapsed,
+}: DashboardSidebarProps) {
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
-  const collapsed = useSidebarStore(state => state.collapsed);
+  const storedCollapsed = useSidebarStore(state => state.collapsed);
   const hasInteracted = useSidebarStore(state => state.hasInteracted);
-  const toggleCollapsed = useSidebarStore(state => state.toggleCollapsed);
+  const setCollapsed = useSidebarStore(state => state.setCollapsed);
+  const initializeCollapsed = useSidebarStore(
+    state => state.initializeCollapsed,
+  );
+
+  useEffect(() => {
+    initializeCollapsed(initialCollapsed);
+  }, [initializeCollapsed, initialCollapsed]);
+
+  const collapsed = hasInteracted ? storedCollapsed : initialCollapsed;
 
   const subtleTransition =
     prefersReducedMotion || !hasInteracted
@@ -65,7 +81,11 @@ export default function DashboardSidebar() {
           </Link>
         </div>
 
-        <DashboardSidebarNav pathname={pathname} />
+        <DashboardSidebarNav
+          pathname={pathname}
+          collapsed={collapsed}
+          shouldAnimate={hasInteracted}
+        />
 
         <div
           className={cn(
@@ -77,7 +97,7 @@ export default function DashboardSidebar() {
             size='icon-sm'
             variant='outline'
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={toggleCollapsed}>
+            onClick={() => setCollapsed(!collapsed, true)}>
             <PanelLeft className='size-4' />
           </Button>
         </div>

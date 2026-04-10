@@ -2,15 +2,20 @@
 
 import { create } from 'zustand';
 
-const SIDEBAR_COLLAPSED_STORAGE_KEY = 'dashboard-sidebar-collapsed';
+import {
+  serializeSidebarCollapsedCookie,
+  SIDEBAR_COLLAPSED_COOKIE_NAME,
+} from '@/lib/sidebar/cookies';
 
 type SidebarStoreState = {
   collapsed: boolean;
   mobileOpen: boolean;
   hasInteracted: boolean;
+  isInitialized: boolean;
 };
 
 type SidebarStoreActions = {
+  initializeCollapsed: (collapsed: boolean) => void;
   setCollapsed: (collapsed: boolean, interacted?: boolean) => void;
   toggleCollapsed: () => void;
   setMobileOpen: (open: boolean) => void;
@@ -21,26 +26,43 @@ type SidebarStoreActions = {
 type SidebarStore = SidebarStoreState & SidebarStoreActions;
 
 function persistCollapsedState(collapsed: boolean) {
-  if (typeof window === 'undefined') {
+  if (typeof document === 'undefined') {
     return;
   }
 
-  window.localStorage.setItem(
-    SIDEBAR_COLLAPSED_STORAGE_KEY,
-    collapsed ? '1' : '0',
-  );
+  const secureAttribute =
+    typeof window !== 'undefined' && window.location.protocol === 'https:'
+      ? '; Secure'
+      : '';
+
+  document.cookie = `${SIDEBAR_COLLAPSED_COOKIE_NAME}=${serializeSidebarCollapsedCookie(
+    collapsed,
+  )}; Path=/; Max-Age=31536000; SameSite=Lax${secureAttribute}`;
 }
 
 export const useSidebarStore = create<SidebarStore>((set, get) => ({
   collapsed: false,
   mobileOpen: false,
   hasInteracted: false,
+  isInitialized: false,
+  initializeCollapsed: collapsed => {
+    if (get().isInitialized) {
+      return;
+    }
+
+    set({
+      collapsed,
+      hasInteracted: false,
+      isInitialized: true,
+    });
+  },
   setCollapsed: (collapsed, interacted = true) => {
     persistCollapsedState(collapsed);
 
     set(state => ({
       collapsed,
       hasInteracted: state.hasInteracted || interacted,
+      isInitialized: true,
     }));
   },
   toggleCollapsed: () => {
