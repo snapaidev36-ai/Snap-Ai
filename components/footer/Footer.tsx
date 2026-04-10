@@ -2,14 +2,18 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { socialLinks } from '@/constants';
 import React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { socialLinks } from '@/constants';
+import { fadeUp, sectionContainer } from '@/lib/motion/variants';
 
 interface FooterProps {
   ImageTools?: { name: string }[];
 }
 
 const Footer: React.FC<FooterProps> = ({ ImageTools = [] }) => {
+  const prefersReducedMotion = useReducedMotion();
+  const motionEnabled = !prefersReducedMotion;
   const toolURL = (toolHref: string) =>
     toolHref?.toLowerCase().replaceAll('_', '-');
 
@@ -61,50 +65,71 @@ const Footer: React.FC<FooterProps> = ({ ImageTools = [] }) => {
   ];
 
   return (
-    <div className='w-full theme:grey02BgClass'>
+    <motion.footer
+      className='w-full theme:grey02BgClass'
+      initial={motionEnabled ? 'hidden' : false}
+      whileInView={motionEnabled ? 'show' : undefined}
+      viewport={motionEnabled ? { once: true, amount: 0.2 } : undefined}
+      variants={motionEnabled ? sectionContainer : undefined}>
       <div className='max-w-7xl mx-auto px-4 md:px-8 py-10'>
-        <div className='flex flex-col md:flex-row justify-between gap-3 w-full border-b border-b-[#D8D8D8] pb-12'>
-          <div className='flex gap-16 xl:gap-32'>
-            <div>
-              <h4 className='font-bold text-base lg:text-xl'></h4>
-              <div className='flex flex-col gap-2 mt-4'>
-                {ImageTools.map((tool, index) => (
-                  <Link
-                    key={index}
-                    href={`/dashboard/${toolURL(tool.name)}`}
-                    className='text-base theme:lightText'>
-                    {tool.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
+        <motion.div
+          className='flex flex-col md:flex-row justify-between gap-3 w-full border-b border-b-[#D8D8D8] pb-12'
+          variants={motionEnabled ? sectionContainer : undefined}>
+          <motion.div
+            className='flex gap-16 xl:gap-32'
+            variants={motionEnabled ? sectionContainer : undefined}>
+            {ImageTools.length ? (
+              <motion.div variants={motionEnabled ? fadeUp : undefined}>
+                <h4 className='font-bold text-base lg:text-xl'></h4>
+                <motion.div
+                  className='flex flex-col gap-2 mt-4'
+                  variants={motionEnabled ? sectionContainer : undefined}>
+                  {ImageTools.map((tool, index) => (
+                    <motion.div
+                      key={index}
+                      variants={motionEnabled ? fadeUp : undefined}>
+                      <Link
+                        href={`/dashboard/${toolURL(tool.name)}`}
+                        className='text-base theme:lightText'>
+                        {tool.name}
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </motion.div>
+            ) : null}
 
-            <div>
+            <motion.div variants={motionEnabled ? fadeUp : undefined}>
               <h4 className='text-lg font-bold mb-4'>{'Others'}</h4>
-              <ul>
-                <li>
+              <motion.ul
+                variants={motionEnabled ? sectionContainer : undefined}>
+                <motion.li variants={motionEnabled ? fadeUp : undefined}>
                   <Link
                     href='/terms-of-service'
                     className='text-base theme:lightText mb-2 block'>
                     {'Terms of Service'}
                   </Link>
-                </li>
-                <li>
+                </motion.li>
+                <motion.li variants={motionEnabled ? fadeUp : undefined}>
                   <Link
                     href='/privacy-policy'
                     className='text-base theme:lightText mb-2 block'>
                     {'Privacy Policy'}
                   </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
+                </motion.li>
+              </motion.ul>
+            </motion.div>
+          </motion.div>
 
-          <div>
+          <motion.div variants={motionEnabled ? fadeUp : undefined}>
             <h4 className='font-bold text-base lg:text-xl'>{'Payment'}</h4>
-            <div className='relative w-full max-w-[296px] mt-5 flex gap-4 flex-row'>
+            <motion.div
+              className='relative w-full max-w-74 mt-5 flex gap-4 flex-row'
+              variants={motionEnabled ? sectionContainer : undefined}>
               {paymentIcons.map(({ key, icon }) => (
-                <span key={key}>
+                <motion.span
+                  key={key}
+                  variants={motionEnabled ? fadeUp : undefined}>
                   <Image
                     src={icon as string}
                     className='w-full'
@@ -112,56 +137,75 @@ const Footer: React.FC<FooterProps> = ({ ImageTools = [] }) => {
                     height={40}
                     alt='payment methods'
                   />
-                </span>
+                </motion.span>
               ))}
-            </div>
+            </motion.div>
 
             {Object.values(socialLinks || {}).some(Boolean) && (
-              <>
-                <div className='flex gap-2 mt-5'>
-                  {icons.map(({ key, svg }) => {
-                    const link = socialLinks?.[key as keyof typeof socialLinks];
-                    return typeof link === 'string' && link ? (
+              <motion.div
+                className='flex gap-2 mt-5'
+                variants={motionEnabled ? sectionContainer : undefined}>
+                {icons.map(({ key, svg }) => {
+                  const link = socialLinks?.[key as keyof typeof socialLinks];
+                  return typeof link === 'string' && link ? (
+                    <motion.div
+                      key={key}
+                      variants={motionEnabled ? fadeUp : undefined}>
                       <Link
-                        key={key}
                         href={link}
                         target='_blank'
                         rel='noopener noreferrer'
                         className='theme:grey03BgClass rounded-full w-10 h-10 lg:w-12 lg:h-12 flex justify-center items-center'>
                         {svg}
                       </Link>
-                    ) : null;
-                  })}
-                </div>
-              </>
+                    </motion.div>
+                  ) : null;
+                })}
+              </motion.div>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div>
-          <div className='text-center flex flex-col items-center gap lg:gap-3 py-6'>
-            <Link href='/'>
-              <Image src='/logo.png' width={36} height={36} alt='logo' />
-            </Link>
-            <small className='capitalize'>{'Ai-Devs'}</small>
-          </div>
-          <div className='flex flex-col gap-3 justify-between items-center'>
-            <small className='flex justify-center flex-wrap gap-0.5'>
+        <motion.div
+          className='flex flex-col gap-3 justify-between items-center'
+          variants={motionEnabled ? sectionContainer : undefined}>
+          <motion.div
+            className='text-center flex flex-col items-center gap lg:gap-3 py-6'
+            variants={motionEnabled ? sectionContainer : undefined}>
+            <motion.div variants={motionEnabled ? fadeUp : undefined}>
+              <Link href='/'>
+                <Image src='/logo.png' width={36} height={36} alt='logo' />
+              </Link>
+            </motion.div>
+            <motion.small
+              variants={motionEnabled ? fadeUp : undefined}
+              className='capitalize'>
+              {'Ai-Devs'}
+            </motion.small>
+          </motion.div>
+          <motion.div
+            className='flex flex-col gap-3 justify-between items-center'
+            variants={motionEnabled ? sectionContainer : undefined}>
+            <motion.small
+              variants={motionEnabled ? fadeUp : undefined}
+              className='flex justify-center flex-wrap gap-0.5'>
               ©{'Operated By'}
               <span className='capitalize'>{'Footer Text'}</span>
               <span className='ml-1'>
                 {'All rights reserved'} {new Date().getFullYear()}
               </span>
-            </small>
-            <ul className='flex flex-wrap gap-2 text-xs leading-none justify-center mt-1 lg:mt-0'>
-              <li>
+            </motion.small>
+            <motion.ul
+              className='flex flex-wrap gap-2 text-xs leading-none justify-center mt-1 lg:mt-0'
+              variants={motionEnabled ? sectionContainer : undefined}>
+              <motion.li variants={motionEnabled ? fadeUp : undefined}>
                 <Link href='#'>{'Terms of Service'}</Link>
-              </li>
-            </ul>
-          </div>
-        </div>
+              </motion.li>
+            </motion.ul>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </motion.footer>
   );
 };
 
