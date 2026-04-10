@@ -63,12 +63,12 @@ const Hero: React.FC = () => {
         <Button
           onClick={handlePrimaryAction}
           disabled={!initialized}
-          className='h-12 bg-[rgb(197_255_103/var(--tw-bg-opacity,1))]  rounded-full w-40 font-bold text-black'>
+          className='h-10 w-40 font-bold'>
           {primaryActionLabel}
         </Button>
         <Button
           onClick={() => console.log('Navigate to create AI image page')}
-          className='h-12 bg-black  rounded-full w-40 font-bold text-white'>
+          className='h-10 bg-black w-40 font-bold text-white'>
           Create AI Image
         </Button>
       </div>
