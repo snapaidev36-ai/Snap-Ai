@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronLeft, PanelLeft } from 'lucide-react';
+import { PanelLeft } from 'lucide-react';
 
 import { DASHBOARD_NAV_ITEMS } from '@/components/dashboard/dashboard.constants';
 import { Button } from '@/components/ui/button';
@@ -63,60 +63,56 @@ export default function DashboardSidebar({
     <>
       <aside
         className={cn(
-          'bg-sidebar/80 border-sidebar-border supports-[backdrop-filter]:bg-sidebar/65 hidden h-screen shrink-0 border-r backdrop-blur-xl transition-all duration-300 md:flex md:flex-col',
+          'bg-sidebar/80 border-sidebar-border supports-backdrop-filter:bg-sidebar/65 hidden h-dvh shrink-0 border-r backdrop-blur-xl transition-all duration-300 md:flex md:flex-col',
           collapsed ? 'md:w-20' : 'md:w-64',
         )}>
         <div
           className={cn(
             'flex h-16 items-center px-3',
-            collapsed ? 'justify-center' : 'justify-between',
+            collapsed ? 'justify-center' : 'justify-start',
           )}>
-          <Link href='/dashboard' className='inline-flex items-center'>
+          <Link
+            href={collapsed ? '/dashboard' : '/'}
+            className='inline-flex items-center'>
             {collapsed ? (
               <Image
-                src='/snap-logo2.png'
+                src='/logo.png'
                 alt='Snap AI'
                 width={36}
                 height={36}
-                className='size-9 rounded-md object-cover'
+                className='size-9 rounded-md object-contain'
               />
             ) : (
-              <Image
-                src='/snap-logo-4.png'
-                alt='Snap AI'
-                width={124}
-                height={44}
-                className='h-9 w-auto'
-              />
+              <span className='flex items-center gap-2'>
+                <Image
+                  src='/logo.png'
+                  alt='Snap AI'
+                  width={36}
+                  height={36}
+                  className='h-9 object-contain'
+                />
+                <span className='font-bold'>Snap AI</span>
+              </span>
             )}
           </Link>
-
-          {!collapsed ? (
-            <Button
-              type='button'
-              size='icon-sm'
-              variant='ghost'
-              aria-label='Collapse sidebar'
-              onClick={() => onCollapsedChange(true)}>
-              <ChevronLeft className='size-4' />
-            </Button>
-          ) : null}
         </div>
 
         {renderNav(undefined, collapsed)}
 
-        {collapsed ? (
-          <div className='mt-auto flex justify-center p-3'>
-            <Button
-              type='button'
-              size='icon-sm'
-              variant='outline'
-              aria-label='Expand sidebar'
-              onClick={() => onCollapsedChange(false)}>
-              <PanelLeft className='size-4' />
-            </Button>
-          </div>
-        ) : null}
+        <div
+          className={cn(
+            'mt-auto flex p-3',
+            collapsed ? 'justify-center' : 'justify-end',
+          )}>
+          <Button
+            type='button'
+            size='icon-sm'
+            variant='outline'
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            onClick={() => onCollapsedChange(!collapsed)}>
+            <PanelLeft className='size-4' />
+          </Button>
+        </div>
       </aside>
 
       <Sheet open={mobileOpen} onOpenChange={onMobileOpenChange}>
@@ -128,13 +124,16 @@ export default function DashboardSidebar({
             <SheetDescription className='sr-only'>
               Navigate dashboard sections
             </SheetDescription>
-            <Image
-              src='/snap-logo-4.png'
-              alt='Snap AI'
-              width={124}
-              height={44}
-              className='h-9 w-auto'
-            />
+            <Link href='/' className='flex items-center gap-2'>
+              <Image
+                src='/logo.png'
+                alt='Snap AI'
+                width={36}
+                height={36}
+                className='h-9 object-contain'
+              />
+              <span className='font-bold'>Snap AI</span>
+            </Link>
           </SheetHeader>
           {renderNav(() => onMobileOpenChange(false), false)}
         </SheetContent>

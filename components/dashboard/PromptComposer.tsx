@@ -8,7 +8,6 @@ import {
   RECENT_PROMPTS,
   STYLE_OPTIONS,
 } from '@/components/dashboard/dashboard.constants';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Select,

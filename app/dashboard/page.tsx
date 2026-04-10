@@ -54,8 +54,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className='min-h-screen bg-background'>
-      <div className='flex min-h-screen'>
+    <main className='h-dvh overflow-hidden bg-background'>
+      <div className='flex h-dvh'>
         <DashboardSidebar
           collapsed={isSidebarCollapsed}
           onCollapsedChange={setIsSidebarCollapsed}
@@ -63,14 +63,14 @@ export default function DashboardPage() {
           onMobileOpenChange={setIsMobileSidebarOpen}
         />
 
-        <div className='flex min-h-screen flex-1 flex-col'>
+        <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
           <DashboardHeader
             onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
             onLogout={handleLogout}
             isLoggingOut={isLoggingOut}
           />
 
-          <div className='flex-1 px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6'>
+          <div className='min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6'>
             <div className='mx-auto flex w-full max-w-5xl flex-col gap-5 sm:gap-6'>
               {errorMessage ? (
                 <p

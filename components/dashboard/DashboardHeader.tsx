@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { Bell, Menu, Sparkles } from 'lucide-react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -14,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import DashboardBreadcrumbs from '@/components/dashboard/DashboardBreadcrumbs';
 import { useAuthStore } from '@/lib/store/auth-store';
 
 type DashboardHeaderProps = {
@@ -63,9 +63,9 @@ export default function DashboardHeader({
   const initials = getInitials(user?.firstName, user?.lastName);
 
   return (
-    <header className='bg-background/90 sticky top-0 z-30 border-b backdrop-blur'>
+    <header className='bg-background/90 sticky top-0 z-30 shrink-0 border-b backdrop-blur'>
       <div className='flex h-16 items-center justify-between px-3 sm:px-6 lg:px-8'>
-        <div className='flex items-center gap-3'>
+        <div className='flex min-w-0 items-center gap-3'>
           <Button
             type='button'
             variant='outline'
@@ -76,14 +76,7 @@ export default function DashboardHeader({
             <Menu className='size-4' />
           </Button>
 
-          <Image
-            src='/snap-logo-4.png'
-            alt='Snap AI'
-            width={116}
-            height={40}
-            className='h-8 w-auto'
-            priority
-          />
+          <DashboardBreadcrumbs />
         </div>
 
         <div className='flex items-center gap-2 sm:gap-3'>
