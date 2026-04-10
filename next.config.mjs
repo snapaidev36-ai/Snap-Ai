@@ -8,6 +8,7 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
+  output: 'standalone',
   images: {
     remotePatterns: [
       {

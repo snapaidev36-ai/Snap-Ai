@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "prisma generate && next dev",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "prisma:validate": "prisma validate",
@@ -13,6 +13,7 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "^5.15.9",
     "@prisma/client": "^6.19.3",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-slot": "^1.2.4",
