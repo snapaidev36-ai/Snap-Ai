@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Mic, Send } from 'lucide-react';
+import { sectionContainer, fadeUp, slideDown } from '@/lib/motion/variants';
 
 import {
   ASPECT_RATIO_OPTIONS,
@@ -20,7 +22,11 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 
 type SpeechRecognitionEventLike = Event & {
-  results: ArrayLike<ArrayLike<{ transcript: string }>>;
+  resultIndex: number;
+  results: ArrayLike<{
+    isFinal?: boolean;
+    0?: { transcript?: string };
+  }>;
 };
 
 type SpeechRecognitionLike = {
@@ -53,22 +59,6 @@ function getServerSnapshot() {
   return false;
 }
 
-function useDebouncedValue<T>(value: T, delayMs: number) {
-  const [debounced, setDebounced] = useState(value);
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setDebounced(value);
-    }, delayMs);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [value, delayMs]);
-
-  return debounced;
-}
-
 export default function PromptComposer() {
   const [promptInput, setPromptInput] = useState('');
   const [pendingVoiceText, setPendingVoiceText] = useState('');
@@ -78,13 +68,16 @@ export default function PromptComposer() {
 
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const voiceDebounceTimeoutRef = useRef<number | null>(null);
-
-  const debouncedPrompt = useDebouncedValue(promptInput, 350);
+  const pendingFinalTranscriptRef = useRef<string>('');
+  const observedFinalTranscriptRef = useRef<string>('');
+  const interimTranscriptRef = useRef<string>('');
   const isClient = useSyncExternalStore(
     subscribe,
     getClientSnapshot,
     getServerSnapshot,
   );
+
+  const prefersReducedMotion = useReducedMotion();
 
   const isVoiceSupported =
     isClient &&
@@ -105,6 +98,72 @@ export default function PromptComposer() {
     };
   }, []);
 
+  function appendSegmentToPrompt(segment: string) {
+    const text = segment?.trim();
+    if (!text) return;
+
+    setPromptInput(prev => {
+      const prevTrim = prev.trim();
+      if (prevTrim && prevTrim.endsWith(text)) return prev;
+      return prevTrim ? `${prevTrim} ${text}` : text;
+    });
+  }
+
+  function queueFinalTranscript(segment: string) {
+    const text = segment.trim();
+    if (!text) return;
+
+    pendingFinalTranscriptRef.current = pendingFinalTranscriptRef.current
+      ? `${pendingFinalTranscriptRef.current} ${text}`.trim()
+      : text;
+
+    if (voiceDebounceTimeoutRef.current) {
+      window.clearTimeout(voiceDebounceTimeoutRef.current);
+    }
+
+    voiceDebounceTimeoutRef.current = window.setTimeout(() => {
+      const pendingFinalText = pendingFinalTranscriptRef.current.trim();
+      if (pendingFinalText) {
+        appendSegmentToPrompt(pendingFinalText);
+        pendingFinalTranscriptRef.current = '';
+      }
+      voiceDebounceTimeoutRef.current = null;
+    }, 180);
+  }
+
+  function flushVoiceTranscriptBuffer() {
+    if (voiceDebounceTimeoutRef.current) {
+      window.clearTimeout(voiceDebounceTimeoutRef.current);
+      voiceDebounceTimeoutRef.current = null;
+    }
+
+    const pendingFinalText = pendingFinalTranscriptRef.current.trim();
+    if (pendingFinalText) {
+      appendSegmentToPrompt(pendingFinalText);
+      pendingFinalTranscriptRef.current = '';
+      return;
+    }
+
+    const interimText = interimTranscriptRef.current.trim();
+    if (interimText) {
+      appendSegmentToPrompt(interimText);
+      interimTranscriptRef.current = '';
+    }
+  }
+
+  async function ensureMicrophoneConstraints(): Promise<boolean> {
+    if (!navigator?.mediaDevices?.getUserMedia) return false;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { noiseSuppression: true, echoCancellation: true },
+      });
+      stream.getTracks().forEach(t => t.stop());
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   function appendPromptFromChip(prompt: string) {
     setPromptInput(prompt);
   }
@@ -122,43 +181,81 @@ export default function PromptComposer() {
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
+    // best-effort: limit alternatives
+    // @ts-expect-error - some engines expose maxAlternatives
+    recognition.maxAlternatives = 1;
 
-    recognition.onresult = event => {
-      const latestResult = event.results[event.results.length - 1];
-      const transcript = latestResult?.[0]?.transcript?.trim();
+    recognition.onresult = (event: unknown) => {
+      const ev = event as SpeechRecognitionEventLike;
+      const finalParts: string[] = [];
+      const interimParts: string[] = [];
 
-      if (transcript) {
-        setPendingVoiceText(transcript);
+      const startIndex = ev.resultIndex ?? 0;
+      const results = ev.results;
+      for (let i = startIndex; i < results.length; i++) {
+        const res = results[i];
+        if (!res) continue;
 
-        if (voiceDebounceTimeoutRef.current) {
-          window.clearTimeout(voiceDebounceTimeoutRef.current);
+        const t = res[0]?.transcript?.trim() ?? '';
+        if (!t) continue;
+        if (res.isFinal) finalParts.push(t);
+        else interimParts.push(t);
+      }
+
+      if (finalParts.length) {
+        const combinedFinal = finalParts.join(' ').trim();
+        let toQueue = combinedFinal;
+        const observedFinal = observedFinalTranscriptRef.current;
+        if (observedFinal && combinedFinal.startsWith(observedFinal)) {
+          toQueue = combinedFinal.slice(observedFinal.length).trim();
+        } else if (observedFinal && observedFinal.startsWith(combinedFinal)) {
+          toQueue = '';
         }
 
-        voiceDebounceTimeoutRef.current = window.setTimeout(() => {
-          setPromptInput(previousPrompt => {
-            const basePrompt = previousPrompt.trim();
-            return basePrompt ? `${basePrompt} ${transcript}` : transcript;
-          });
-          setPendingVoiceText('');
-        }, 450);
+        observedFinalTranscriptRef.current = combinedFinal;
+        interimTranscriptRef.current = '';
+        setPendingVoiceText('');
+        if (toQueue) {
+          queueFinalTranscript(toQueue);
+        }
+        return;
+      }
+
+      const interimCombined = interimParts.join(' ').trim();
+      if (interimCombined && interimTranscriptRef.current !== interimCombined) {
+        interimTranscriptRef.current = interimCombined;
+        setPendingVoiceText(interimCombined);
+      } else if (!interimCombined) {
+        setPendingVoiceText('');
       }
     };
 
     recognition.onerror = () => {
+      if (voiceDebounceTimeoutRef.current) {
+        window.clearTimeout(voiceDebounceTimeoutRef.current);
+        voiceDebounceTimeoutRef.current = null;
+      }
+      pendingFinalTranscriptRef.current = '';
+      interimTranscriptRef.current = '';
+      setPendingVoiceText('');
+      observedFinalTranscriptRef.current = '';
       setIsListening(false);
     };
 
     recognition.onend = () => {
+      flushVoiceTranscriptBuffer();
+      pendingFinalTranscriptRef.current = '';
+      interimTranscriptRef.current = '';
+      observedFinalTranscriptRef.current = '';
+      setPendingVoiceText('');
       setIsListening(false);
     };
 
     return recognition;
   }
 
-  function toggleVoiceInput() {
-    if (!isVoiceSupported) {
-      return;
-    }
+  async function toggleVoiceInput(): Promise<void> {
+    if (!isVoiceSupported) return;
 
     if (isListening) {
       recognitionRef.current?.stop();
@@ -170,9 +267,16 @@ export default function PromptComposer() {
       recognitionRef.current = createRecognitionInstance();
     }
 
-    if (!recognitionRef.current) {
-      return;
-    }
+    if (!recognitionRef.current) return;
+
+    // Prepare session base and reset transient refs
+    pendingFinalTranscriptRef.current = '';
+    observedFinalTranscriptRef.current = '';
+    interimTranscriptRef.current = '';
+    setPendingVoiceText('');
+
+    // Try to enable basic mic constraints (noise suppression/echo cancel) where supported
+    await ensureMicrophoneConstraints();
 
     try {
       recognitionRef.current.start();
@@ -183,23 +287,28 @@ export default function PromptComposer() {
   }
 
   return (
-    <section className='space-y-3'>
+    <motion.section
+      className='space-y-3'
+      variants={prefersReducedMotion ? undefined : sectionContainer}>
       <div className='flex flex-wrap items-center gap-2'>
         <span className='text-sm font-medium text-foreground'>
           Recent prompts:
         </span>
         {RECENT_PROMPTS.map(prompt => (
-          <button
+          <motion.button
             key={prompt}
             type='button'
             onClick={() => appendPromptFromChip(prompt)}
+            variants={prefersReducedMotion ? undefined : fadeUp}
             className='bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full px-3 py-1 text-xs transition-colors'>
             {prompt}
-          </button>
+          </motion.button>
         ))}
       </div>
 
-      <div className='overflow-hidden rounded-2xl border bg-card shadow-sm'>
+      <motion.div
+        variants={prefersReducedMotion ? undefined : slideDown}
+        className='overflow-hidden rounded-2xl border bg-card shadow-sm'>
         <div className='space-y-4 p-4 sm:p-5'>
           <div className='space-y-2'>
             <label
@@ -260,7 +369,7 @@ export default function PromptComposer() {
                   isListening ? 'Stop voice input' : 'Start voice input'
                 }
                 disabled={!isVoiceSupported}
-                onClick={toggleVoiceInput}
+                onClick={() => void toggleVoiceInput()}
                 className={
                   isListening ? 'border-primary text-primary' : undefined
                 }>
@@ -287,7 +396,7 @@ export default function PromptComposer() {
             </p>
           </div>
         </div>
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 }

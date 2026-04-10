@@ -1,103 +1,91 @@
 'use client';
 
+import { useEffect } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PanelLeft } from 'lucide-react';
 
-import { DASHBOARD_NAV_ITEMS } from '@/components/dashboard/dashboard.constants';
+import MobileSidebar from '@/components/dashboard/MobileSidebar';
+import DashboardSidebarNav from '@/components/dashboard/DashboardSidebarNav';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
+import { useSidebarStore } from '@/lib/store/sidebar-store';
 import { cn } from '@/lib/utils';
 
 type DashboardSidebarProps = {
-  collapsed: boolean;
-  onCollapsedChange: (collapsed: boolean) => void;
-  mobileOpen: boolean;
-  onMobileOpenChange: (open: boolean) => void;
+  initialCollapsed: boolean;
 };
 
 export default function DashboardSidebar({
-  collapsed,
-  onCollapsedChange,
-  mobileOpen,
-  onMobileOpenChange,
+  initialCollapsed,
 }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const prefersReducedMotion = useReducedMotion();
+  const storedCollapsed = useSidebarStore(state => state.collapsed);
+  const hasInteracted = useSidebarStore(state => state.hasInteracted);
+  const setCollapsed = useSidebarStore(state => state.setCollapsed);
+  const initializeCollapsed = useSidebarStore(
+    state => state.initializeCollapsed,
+  );
 
-  function renderNav(onNavigate?: () => void, compact?: boolean) {
-    return (
-      <nav className='mt-6 grid gap-2 px-3'>
-        {DASHBOARD_NAV_ITEMS.map(item => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
+  useEffect(() => {
+    initializeCollapsed(initialCollapsed);
+  }, [initializeCollapsed, initialCollapsed]);
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              className={cn(
-                'group flex h-11 items-center rounded-lg border border-transparent px-3 text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-sidebar-primary text-sidebar-primary-foreground'
-                  : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-                compact && 'justify-center px-0',
-              )}>
-              <Icon className={cn('size-4', !compact && 'mr-2')} />
-              {!compact ? <span>{item.label}</span> : null}
-            </Link>
-          );
-        })}
-      </nav>
-    );
-  }
+  const collapsed = hasInteracted ? storedCollapsed : initialCollapsed;
+
+  const subtleTransition =
+    prefersReducedMotion || !hasInteracted
+      ? { duration: 0 }
+      : collapsed
+        ? { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const }
+        : { duration: 0.36, ease: [0.4, 0, 0.2, 1] as const };
 
   return (
     <>
       <aside
         className={cn(
-          'bg-sidebar/80 border-sidebar-border supports-backdrop-filter:bg-sidebar/65 hidden h-dvh shrink-0 border-r backdrop-blur-xl transition-all duration-300 md:flex md:flex-col',
-          collapsed ? 'md:w-20' : 'md:w-64',
-        )}>
-        <div
-          className={cn(
-            'flex h-16 items-center px-3',
-            collapsed ? 'justify-center' : 'justify-start',
-          )}>
+          'bg-sidebar/80 border-sidebar-border supports-backdrop-filter:bg-sidebar/65 hidden h-dvh shrink-0 border-r backdrop-blur-xl transition-[width] duration-300 ease-in-out md:flex md:flex-col',
+        )}
+        style={{
+          width: collapsed ? 80 : 256,
+          minWidth: 80,
+        }}>
+        <div className='flex h-16 items-center px-3'>
           <Link
             href={collapsed ? '/dashboard' : '/'}
-            className='inline-flex items-center'>
-            {collapsed ? (
-              <Image
-                src='/logo.png'
-                alt='Snap AI'
-                width={36}
-                height={36}
-                className='size-9 rounded-md object-contain'
-              />
-            ) : (
-              <span className='flex items-center gap-2'>
-                <Image
-                  src='/logo.png'
-                  alt='Snap AI'
-                  width={36}
-                  height={36}
-                  className='h-9 object-contain'
-                />
-                <span className='font-bold'>Snap AI</span>
-              </span>
-            )}
+            className='inline-flex items-center w-full'>
+            <Image
+              src='/logo.png'
+              alt='Snap AI'
+              width={36}
+              height={36}
+              className='size-9 rounded-md object-contain'
+            />
+
+            <motion.span
+              initial={false}
+              animate={{
+                opacity: collapsed ? 0 : 1,
+                x: collapsed ? -6 : 0,
+              }}
+              transition={subtleTransition}
+              style={{
+                maxWidth: collapsed ? 0 : 112,
+                marginLeft: collapsed ? 0 : 8,
+              }}
+              className='inline-block overflow-hidden whitespace-nowrap font-bold'>
+              Snap AI
+            </motion.span>
           </Link>
         </div>
 
-        {renderNav(undefined, collapsed)}
+        <DashboardSidebarNav
+          pathname={pathname}
+          collapsed={collapsed}
+          shouldAnimate={hasInteracted}
+        />
 
         <div
           className={cn(
@@ -109,35 +97,13 @@ export default function DashboardSidebar({
             size='icon-sm'
             variant='outline'
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={() => onCollapsedChange(!collapsed)}>
+            onClick={() => setCollapsed(!collapsed, true)}>
             <PanelLeft className='size-4' />
           </Button>
         </div>
       </aside>
 
-      <Sheet open={mobileOpen} onOpenChange={onMobileOpenChange}>
-        <SheetContent
-          side='left'
-          className='bg-sidebar/95 border-sidebar-border w-[84%] p-0 text-sidebar-foreground backdrop-blur-xl'>
-          <SheetHeader className='px-4 pt-6 pb-2'>
-            <SheetTitle className='sr-only'>Sidebar navigation</SheetTitle>
-            <SheetDescription className='sr-only'>
-              Navigate dashboard sections
-            </SheetDescription>
-            <Link href='/' className='flex items-center gap-2'>
-              <Image
-                src='/logo.png'
-                alt='Snap AI'
-                width={36}
-                height={36}
-                className='h-9 object-contain'
-              />
-              <span className='font-bold'>Snap AI</span>
-            </Link>
-          </SheetHeader>
-          {renderNav(() => onMobileOpenChange(false), false)}
-        </SheetContent>
-      </Sheet>
+      <MobileSidebar />
     </>
   );
 }
