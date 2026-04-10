@@ -159,6 +159,26 @@ Behavior:
 - Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY in .env.
 - Ensure FIREBASE_PRIVATE_KEY uses escaped newlines when stored in env (\\n).
 
+## CI (GitHub Actions)
+
+- Workflow file: .github/workflows/ci.yml.
+- On every push to any branch, CI runs:
+  - npm ci
+  - npm run lint
+- On pull requests targeting main, CI runs:
+  - npm ci
+  - npm run lint
+  - npm ci
+  - npm run build
+- Build depends on lint for pull requests to main.
+
+### Required Checks For Main
+
+- Configure branch protection for main and require these status checks:
+  - CI / Lint
+  - CI / Build
+- With required checks enabled, merge is blocked when lint or build fails.
+
 ## Useful Commands
 
 - npm run prisma:validate
