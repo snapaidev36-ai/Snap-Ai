@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { Mic, Send, Sparkles } from 'lucide-react';
+import { Mic, Send } from 'lucide-react';
 
 import {
   ASPECT_RATIO_OPTIONS,
@@ -200,13 +200,6 @@ export default function PromptComposer() {
       </div>
 
       <div className='overflow-hidden rounded-2xl border bg-card shadow-sm'>
-        <div className='bg-primary/10 border-b px-4 py-2'>
-          <p className='text-primary flex items-center gap-2 text-sm font-medium'>
-            <Sparkles className='size-4' />
-            Upgrade to pro to unlock all features and faster speed.
-          </p>
-        </div>
-
         <div className='space-y-4 p-4 sm:p-5'>
           <div className='space-y-2'>
             <label
@@ -225,12 +218,12 @@ export default function PromptComposer() {
 
           <Separator />
 
-          <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+          <div className='flex flex-col gap-3 xs:flex-row sm:items-center xs:justify-between'>
             <div className='flex flex-wrap items-center gap-2'>
               <Select value={aspectRatio} onValueChange={setAspectRatio}>
                 <SelectTrigger
                   aria-label='Select aspect ratio'
-                  className='min-w-24'>
+                  className='flex-1 min-w-24'>
                   <SelectValue placeholder='Aspect ratio' />
                 </SelectTrigger>
                 <SelectContent>
@@ -243,7 +236,9 @@ export default function PromptComposer() {
               </Select>
 
               <Select value={style} onValueChange={setStyle}>
-                <SelectTrigger aria-label='Select style' className='min-w-32'>
+                <SelectTrigger
+                  aria-label='Select style'
+                  className='flex-1 min-w-32'>
                   <SelectValue placeholder='Style' />
                 </SelectTrigger>
                 <SelectContent>
