@@ -43,7 +43,7 @@ export default function AuthShell({ children }: AuthShellProps) {
           </motion.div>
 
           <motion.div
-            className='py-12 md:py-0'
+            className='w-full md:max-w-md md:mx-auto py-12 md:py-0'
             variants={motionEnabled ? slideInRight : undefined}>
             {children}
           </motion.div>

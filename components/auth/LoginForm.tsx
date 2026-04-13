@@ -51,7 +51,6 @@ export default function LoginForm() {
   });
 
   const { clearErrors, setError } = form;
-
   function applyBackendValidationErrors(fields: BackendFieldErrors) {
     const emailError = getFirstMessage(fields.email);
     if (emailError) {
@@ -120,7 +119,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className='w-full md:max-w-md md:mx-auto'>
+    <div className='w-full'>
       <div className='flex items-center gap-2 mb-2'>
         <Image src='/logo.png' alt='Logo' width={36} height={36} />
         <h2 className='text-3xl font-bold text-foreground'>Welcome back</h2>

@@ -34,7 +34,6 @@ const clientSchema = z.object({
 });
 
 type FormValues = z.infer<typeof clientSchema>;
-
 type BackendFieldErrors = Partial<
   Record<'firstName' | 'lastName' | 'email' | 'password', string[]>
 >;
@@ -141,7 +140,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className='w-full md:max-w-md md:mx-auto'>
+    <div className='w-full'>
       <div className='flex items-center gap-2 mb-2'>
         <Image src='/logo.png' alt='Logo' width={36} height={36} />
         <h2 className='text-3xl font-bold text-foreground'>
