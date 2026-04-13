@@ -8,18 +8,52 @@ datasource db {
 }
 
 model User {
-    id           String   @id @default(auto()) @map("_id") @db.ObjectId
+    id           String         @id @default(auto()) @map("_id") @db.ObjectId
     firstName    String
     lastName     String
-    email        String   @unique
+    email        String         @unique
     password     String?
     firebaseUid  String?
-    authProvider String   @default("email")
-    credits      Int      @default(0)
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
+    authProvider String         @default("email")
+    credits      Int            @default(0)
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    usageHistory UsageHistory[]
 
     @@index([credits])
     @@index([lastName, firstName])
     @@index([authProvider])
+}
+
+model UsageHistory {
+    id              String      @id @default(auto()) @map("_id") @db.ObjectId
+    userId          String      @db.ObjectId
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    prompt          String
+    creditsDeducted Int
+    creditsBefore   Int
+    creditsAfter    Int
+    aspectRatio     AspectRatio
+    style           Style
+    outputImage     String
+    createdAt       DateTime    @default(now())
+
+    @@index([userId])
+    @@index([userId, createdAt])
+    @@index([userId, aspectRatio, createdAt])
+    @@index([userId, style, createdAt])
+}
+
+enum AspectRatio {
+    RATIO_1_1  @map("1:1")
+    RATIO_4_3  @map("4:3")
+    RATIO_9_16 @map("9:16")
+    RATIO_16_9 @map("16:9")
+}
+
+enum Style {
+    PHOTOREAL   @map("photoreal")
+    CINEMATIC   @map("cinematic")
+    ANIME       @map("anime")
+    DIGITAL_ART @map("digital art")
 }
