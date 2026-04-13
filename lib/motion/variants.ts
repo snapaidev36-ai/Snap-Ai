@@ -29,3 +29,21 @@ export const slideDown = {
     transition: { duration: 0.36, ease: [0.4, 0, 0.2, 1] as const },
   },
 };
+
+export const slideInLeft = {
+  hidden: { opacity: 0, x: -24 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.42, ease: [0.4, 0, 0.2, 1] as const },
+  },
+};
+
+export const slideInRight = {
+  hidden: { opacity: 0, x: 24 },
+  show: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.42, ease: [0.4, 0, 0.2, 1] as const },
+  },
+};

@@ -13,7 +13,7 @@ model User {
     lastName     String
     email        String   @unique
     password     String?
-    firebaseUid  String?  @unique
+    firebaseUid  String?
     authProvider String   @default("email")
     credits      Int      @default(0)
     createdAt    DateTime @default(now())

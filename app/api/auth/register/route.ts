@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       where: { email: parsed.data.email },
       select: { id: true },
     });
-
+    console.log('Existing user check result:', existingUser); // Debug log
     if (existingUser) {
       return jsonError('Email is already registered', 409);
     }
@@ -62,6 +62,8 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (error) {
+    console.error('Error during user registration:', error); // Debug log
+
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === 'P2002'
