@@ -1,6 +1,11 @@
 import type { LucideIcon } from 'lucide-react';
 import { GalleryVerticalEnd, LayoutDashboard, Users } from 'lucide-react';
 
+import {
+  ASPECT_RATIO_OPTIONS as GENERATION_ASPECT_RATIO_OPTIONS,
+  STYLE_OPTIONS as GENERATION_STYLE_OPTIONS,
+} from '@/lib/generation/options';
+
 export type DashboardNavItem = {
   label: string;
   href: string;
@@ -32,15 +37,7 @@ export const RECENT_PROMPTS = [
 ];
 
 export const ASPECT_RATIO_OPTIONS = [
-  { label: '1:1', value: '1:1' },
-  { label: '4:3', value: '4:3' },
-  { label: '16:9', value: '16:9' },
-  { label: '9:16', value: '9:16' },
+  ...GENERATION_ASPECT_RATIO_OPTIONS,
 ];
 
-export const STYLE_OPTIONS = [
-  { label: 'Photoreal', value: 'photoreal' },
-  { label: 'Cinematic', value: 'cinematic' },
-  { label: 'Digital Art', value: 'digital-art' },
-  { label: 'Anime', value: 'anime' },
-];
+export const STYLE_OPTIONS = [...GENERATION_STYLE_OPTIONS];
