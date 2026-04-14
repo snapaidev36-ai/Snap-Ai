@@ -51,6 +51,9 @@ const envSchema = z.object({
   ACCESS_TOKEN_EXPIRES_IN: z.string().default('1h'),
   REFRESH_TOKEN_EXPIRES_IN: z.string().default('7d'),
   BCRYPT_SALT_ROUNDS: z.coerce.number().int().min(10).max(15).default(12),
+  REPLICATE_API_KEY: z.string().min(1, 'REPLICATE_API_KEY is required'),
+  APP_URL: z.string().url().optional(),
+  REPLICATE_WEBHOOK_SIGNING_SECRET: z.string().min(1).optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
