@@ -1,0 +1,255 @@
+const TermsOfService = () => {
+  return (
+    <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <h1 className="text-4xl mt-7 font-bold mb-2 text-foreground">
+        Terms of Service
+      </h1>
+      <p className="text-muted-foreground mb-8">Effective Date: June 2024</p>
+
+      <div className="space-y-8 text-foreground/90 leading-relaxed">
+        <p>
+          Welcome to <strong>Snap Gen AI</strong> (&quot;we&quot;,
+          &quot;our&quot;, or &quot;us&quot;). By accessing or using our
+          AI-powered image generation platform, you agree to be bound by these
+          Terms of Service.
+        </p>
+        <p>
+          If you do not agree with these Terms, you must not use our services.
+        </p>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            1. Description of Service
+          </h2>
+          <p>
+            Snap Gen AI provides an AI-based platform that allows users to
+            generate images from text prompts using third-party AI services.
+          </p>
+          <p className="mt-2">
+            The service operates on a <strong>credit-based system</strong>,
+            where users must purchase credits to generate images after any free
+            usage.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            2. Eligibility
+          </h2>
+          <p>To use our service, you must:</p>
+          <ul className="list-disc pl-6 mt-2 space-y-1">
+            <li>Be at least 13 years old</li>
+            <li>Provide accurate account information</li>
+            <li>Not use the service for illegal or harmful purposes</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            3. User Accounts
+          </h2>
+          <ul className="list-disc pl-6 mt-2 space-y-1">
+            <li>
+              You are responsible for maintaining the confidentiality of your
+              account
+            </li>
+            <li>
+              You agree to notify us immediately of any unauthorized access
+            </li>
+            <li>
+              We reserve the right to suspend or terminate accounts that violate
+              these Terms
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            4. Credits & Payments
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-xl font-semibold mb-2">a. Credit System</h3>
+              <ul className="list-disc pl-6 mt-2 space-y-1">
+                <li>Credits are required to generate images</li>
+                <li>
+                  One image generation consumes a specific number of credits
+                </li>
+                <li>Free credits may be provided upon signup</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">b. Payments</h3>
+              <p>
+                Payments are securely processed through <strong>Stripe</strong>.
+              </p>
+              <ul className="list-disc pl-6 mt-2 space-y-1">
+                <li>We do not store your payment details</li>
+                <li>All transactions are final unless stated otherwise</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">c. Refund Policy</h3>
+              <ul className="list-disc pl-6 mt-2 space-y-1">
+                <li>
+                  Credits are <strong>non-refundable</strong> once used
+                </li>
+                <li>
+                  Refunds may be issued at our discretion in exceptional cases
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            5. Acceptable Use
+          </h2>
+          <p>You agree NOT to use the platform to generate:</p>
+          <ul className="list-disc pl-6 mt-2 space-y-1">
+            <li>Illegal, harmful, or abusive content</li>
+            <li>Copyright-infringing material</li>
+            <li>
+              Adult, explicit, or violent content (unless explicitly allowed)
+            </li>
+            <li>Misleading or deceptive content</li>
+          </ul>
+          <p className="mt-4">
+            We reserve the right to block or remove content and suspend accounts
+            for violations.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            6. AI-Generated Content
+          </h2>
+          <p>
+            Our platform uses <strong>Replicate</strong> for image generation.
+          </p>
+          <ul className="list-disc pl-6 mt-2 space-y-1">
+            <li>
+              Outputs are generated by AI and may not be accurate or unique
+            </li>
+            <li>We do not guarantee quality, originality, or suitability</li>
+            <li>
+              Users are solely responsible for how they use generated content
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            7. Intellectual Property
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-xl font-semibold mb-2">a. Your Content</h3>
+              <ul className="list-disc pl-6 mt-2 space-y-1">
+                <li>You retain rights to the prompts you submit</li>
+                <li>
+                  You may use generated images for personal or commercial
+                  purposes (unless restricted)
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2">b. Our Rights</h3>
+              <ul className="list-disc pl-6 mt-2 space-y-1">
+                <li>
+                  We retain ownership of the platform, design, and technology
+                </li>
+                <li>
+                  Unauthorized copying or resale of the platform is prohibited
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            8. Service Availability
+          </h2>
+          <p>
+            We do not guarantee uninterrupted service, error-free operation, or
+            continuous availability. We may modify, suspend, or discontinue the
+            service at any time without notice.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            9. Limitation of Liability
+          </h2>
+          <p>
+            To the fullest extent permitted by law, we are not liable for any
+            indirect, incidental, or consequential damages resulting from the
+            use or misuse of generated content, service interruptions, or
+            third-party services.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            10. Termination
+          </h2>
+          <p>
+            We may suspend or terminate your access if you violate these Terms,
+            misuse the platform, or as required by law. You may terminate your
+            account at any time.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            11. Privacy
+          </h2>
+          <p>Your use of the service is also governed by our Privacy Policy.</p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            12. Changes to Terms
+          </h2>
+          <p>
+            We reserve the right to update these Terms at any time. Changes will
+            be effective upon posting.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            13. Governing Law
+          </h2>
+          <p>
+            These Terms shall be governed by and interpreted under the laws of{" "}
+            <strong>[Your Country]</strong>.
+          </p>
+        </section>
+
+        <section className="pt-8 border-t border-border">
+          <h2 className="text-2xl font-bold mb-4 text-foreground">
+            14. Contact Information
+          </h2>
+          <p>For any questions regarding these Terms:</p>
+          <p className="mt-2">
+            <strong>Email:</strong> support@snapgenai.com
+          </p>
+          <p>
+            <strong>Website:</strong> https://snapgenai.com
+          </p>
+        </section>
+
+        <section className="p-4 bg-muted rounded-lg text-sm italic text-muted-foreground">
+          <strong>Disclaimer:</strong> The service is provided &quot;as is&quot;
+          without warranties of any kind. We do not guarantee that the service
+          will meet your expectations.
+        </section>
+      </div>
+    </div>
+  );
+};
+
+export default TermsOfService;
