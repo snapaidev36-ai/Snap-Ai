@@ -3,32 +3,75 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { requireCurrentUser } from '@/lib/auth/current-user';
 import { jsonError } from '@/lib/http';
 import { prisma } from '@/lib/prisma';
-import { readGeneratedImage } from '@/lib/server/generated-images';
+import {
+  buildCommunityWatermarkSvg,
+  readGeneratedImageFromStorage,
+} from '@/lib/server/generated-images';
 
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   const imageId = request.nextUrl.searchParams.get('imageId');
+  const variant =
+    request.nextUrl.searchParams.get('variant') === 'community'
+      ? 'community'
+      : 'gallery';
 
   if (!imageId) {
     return jsonError('Image id is required', 400);
   }
 
-  const authResult = await requireCurrentUser(request);
-  if ('error' in authResult) {
-    return authResult.error;
+  if (variant === 'gallery') {
+    const authResult = await requireCurrentUser(request);
+    if ('error' in authResult) {
+      return authResult.error;
+    }
+
+    const imageRecord = await prisma.usageHistory.findFirst({
+      where: {
+        id: imageId,
+        userId: authResult.user.id,
+        outputImage: {
+          not: '',
+        },
+      },
+      select: {
+        id: true,
+        outputImage: true,
+      },
+    });
+
+    if (!imageRecord) {
+      return jsonError('Image not found', 404);
+    }
+
+    try {
+      const asset = await readGeneratedImageFromStorage(
+        imageRecord.outputImage,
+      );
+
+      return new NextResponse(asset.body, {
+        status: 200,
+        headers: {
+          'Content-Type': asset.contentType,
+          'Cache-Control': 'private, no-store',
+        },
+      });
+    } catch {
+      return jsonError('Image not found', 404);
+    }
   }
 
   const imageRecord = await prisma.usageHistory.findFirst({
     where: {
       id: imageId,
-      userId: authResult.user.id,
       outputImage: {
         not: '',
       },
     },
     select: {
       id: true,
+      outputImage: true,
     },
   });
 
@@ -37,15 +80,19 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const imageBuffer = await readGeneratedImage(imageId);
-    const response = new NextResponse(imageBuffer, {
+    const asset = await readGeneratedImageFromStorage(imageRecord.outputImage);
+
+    const svg = buildCommunityWatermarkSvg(
+      `data:${asset.contentType};base64,${Buffer.from(asset.body).toString('base64')}`,
+    );
+
+    return new NextResponse(svg, {
+      status: 200,
       headers: {
-        'Content-Type': 'image/png',
-        'Cache-Control': 'private, no-store',
+        'Content-Type': 'image/svg+xml; charset=utf-8',
+        'Cache-Control': 'public, no-store',
       },
     });
-
-    return response;
   } catch {
     return jsonError('Image not found', 404);
   }

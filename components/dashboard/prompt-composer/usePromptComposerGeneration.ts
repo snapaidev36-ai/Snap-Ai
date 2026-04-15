@@ -24,7 +24,7 @@ type GenerateImageInput = {
   style: StyleValue;
 };
 
-const POLL_INTERVAL_MS = 2500;
+const POLL_INTERVAL_MS = 5000;
 
 type GenerationState = 'idle' | 'processing';
 

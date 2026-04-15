@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { requireCurrentUser } from '@/lib/auth/current-user';
 import { jsonError } from '@/lib/http';
 import { getUsageHistoryEntryForUser } from '@/lib/services/usage-history';
+import { buildGeneratedImageProxyUrl } from '@/lib/server/generated-images';
 
 export const runtime = 'nodejs';
 
@@ -24,7 +25,9 @@ export async function GET(request: NextRequest) {
     return jsonError('Generation not found', 404);
   }
 
-  const imageUrl = usage.outputImage || null;
+  const imageUrl = usage.outputImage
+    ? buildGeneratedImageProxyUrl(usage.id)
+    : null;
   const response = NextResponse.json(
     {
       status: imageUrl ? 'completed' : 'processing',

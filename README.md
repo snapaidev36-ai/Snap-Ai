@@ -46,6 +46,12 @@ The app validates env variables at startup in lib/env.ts.
 - FIREBASE_PROJECT_ID: Firebase Admin project id.
 - FIREBASE_CLIENT_EMAIL: Firebase Admin service account client email.
 - FIREBASE_PRIVATE_KEY: Firebase Admin service account private key.
+- R2_S3_ENDPOINT: Cloudflare R2 S3-compatible endpoint.
+- R2_ACCOUNT_ID: Cloudflare account id used by the R2 bucket.
+- R2_ACCOUNT_TOKEN: Cloudflare account token.
+- R2_ACCESS_ID: Cloudflare R2 access key id.
+- R2_SECRET_ACCESS_KEY: Cloudflare R2 secret access key.
+- R2_BUCKET_NAME: Cloudflare R2 bucket name.
 
 ## Prisma + MongoDB
 

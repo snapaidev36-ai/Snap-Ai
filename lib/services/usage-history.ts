@@ -8,6 +8,18 @@ import {
 import type { AspectRatioValue, StyleValue } from '@/lib/generation/options';
 import { prisma } from '@/lib/prisma';
 
+export type CommunityFeedItem = GalleryItem & {
+  user: {
+    firstName: string;
+    lastName: string;
+  };
+};
+
+export type CommunityFeedPage = {
+  items: CommunityFeedItem[];
+  nextCursor: string | null;
+};
+
 const DEFAULT_GALLERY_LIMIT = 20;
 const MAX_GALLERY_LIMIT = 50;
 
@@ -267,6 +279,71 @@ export async function listUsageHistoryGallery(
     ...row,
     aspectRatio: prismaToAspectRatioValue[row.aspectRatio],
     style: prismaToStyleValue[row.style],
+  }));
+
+  const hasMore = items.length > limit;
+  const pageItems = hasMore ? items.slice(0, limit) : items;
+  const nextCursor = hasMore
+    ? (pageItems[pageItems.length - 1]?.id ?? null)
+    : null;
+
+  return {
+    items: pageItems,
+    nextCursor,
+  };
+}
+
+export async function listCommunityFeed(
+  input: Omit<GalleryCursorPageInput, 'userId'>,
+): Promise<CommunityFeedPage> {
+  const limit = clampLimit(input.limit);
+
+  const rows = await prisma.usageHistory.findMany({
+    where: {
+      outputImage: {
+        not: '',
+      },
+    },
+    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    take: limit + 1,
+    ...(input.cursor
+      ? {
+          cursor: {
+            id: input.cursor,
+          },
+          skip: 1,
+        }
+      : {}),
+    select: {
+      id: true,
+      prompt: true,
+      creditsDeducted: true,
+      creditsBefore: true,
+      creditsAfter: true,
+      aspectRatio: true,
+      style: true,
+      outputImage: true,
+      createdAt: true,
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+
+  const items = rows.map(row => ({
+    id: row.id,
+    prompt: row.prompt,
+    creditsDeducted: row.creditsDeducted,
+    creditsBefore: row.creditsBefore,
+    creditsAfter: row.creditsAfter,
+    aspectRatio: prismaToAspectRatioValue[row.aspectRatio],
+    style: prismaToStyleValue[row.style],
+    outputImage: row.outputImage,
+    createdAt: row.createdAt,
+    user: row.user,
   }));
 
   const hasMore = items.length > limit;
