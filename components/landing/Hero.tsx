@@ -104,7 +104,7 @@ const Hero: React.FC = () => {
           variants={motionEnabled ? slideInLeft : undefined}>
           <div className='col-span-6 h-50 md:h-75 rounded-4xl relative overflow-hidden'>
             <Image
-              src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090594/AI%20Suite/ai-hero-image-left-01_dvzw0w.jpg'
+              src='/discover/1.png'
               className='object-cover absolute top-0 left-0 w-full h-full'
               width={300}
               height={400}
@@ -113,7 +113,7 @@ const Hero: React.FC = () => {
           </div>
           <div className='col-span-6 h-50 md:h-75 rounded-4xl relative overflow-hidden'>
             <Image
-              src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090594/AI%20Suite/ai-hero-image-left-02_ty5vso.jpg'
+              src='/discover/2.png'
               className='object-cover absolute top-0 left-0 w-full h-full'
               width={300}
               height={400}
@@ -129,7 +129,7 @@ const Hero: React.FC = () => {
             <div className='col-span-6'>
               <div className='relative rounded-4xl h-full overflow-hidden'>
                 <Image
-                  src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090594/AI%20Suite/ai-hero-image-center-01_exag1a.jpg'
+                  src='/discover/3.png'
                   className='object-cover absolute top-0 left-0 w-full h-full'
                   width={467}
                   height={891}
@@ -141,7 +141,7 @@ const Hero: React.FC = () => {
             <div className='col-span-6'>
               <div className='relative rounded-4xl lg:h-full xl:h-58 overflow-hidden'>
                 <Image
-                  src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090593/AI%20Suite/ai-hero-image-center-02_mzld7v.jpg'
+                  src='/discover/4.png'
                   className='object-cover absolute top-0 left-0 w-full h-full'
                   sizes='506px'
                   width={1028}
@@ -155,7 +155,7 @@ const Hero: React.FC = () => {
             <div className='col-span-6'>
               <div className='relative rounded-4xl! h-full overflow-hidden'>
                 <Image
-                  src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090594/AI%20Suite/ai-hero-image-center-03_zvh4v4.jpg'
+                  src='/discover/5.png'
                   className='object-cover absolute top-0 left-0 w-full h-full'
                   sizes='245px'
                   width={502}
@@ -167,7 +167,7 @@ const Hero: React.FC = () => {
             <div className='col-span-6'>
               <div className='relative rounded-4xl! h-full overflow-hidden'>
                 <Image
-                  src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090593/AI%20Suite/ai-hero-image-center-04_ichuco.jpg'
+                  src='/discover/6.png'
                   className='object-cover absolute top-0 left-0 w-full h-full'
                   sizes='245px'
                   width={502}
@@ -182,7 +182,7 @@ const Hero: React.FC = () => {
             variants={motionEnabled ? fadeUp : undefined}>
             <div className='relative rounded-4xl h-50 sm:h-119 overflow-hidden'>
               <Image
-                src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090594/AI%20Suite/ai-hero-image-center-01_exag1a.jpg'
+                src='/discover/7.png'
                 className='object-cover absolute top-0 left-0 w-full h-full'
                 sizes='245px'
                 width={467}
@@ -194,7 +194,7 @@ const Hero: React.FC = () => {
           <div className='flex col-span-12 lg:hidden xl:flex sm:col-span-8 xl:col-span-8 flex-col gap-4'>
             <div className='relative rounded-4xl  h-50 sm:h-58 overflow-hidden zzz'>
               <Image
-                src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090593/AI%20Suite/ai-hero-image-center-02_mzld7v.jpg'
+                src='/discover/8.png'
                 className='object-cover absolute top-0 left-0 w-full h-full'
                 sizes='506px'
                 width={1028}
@@ -206,7 +206,7 @@ const Hero: React.FC = () => {
               <div className='col-span-6'>
                 <div className='relative rounded-4xl! h-50 sm:h-58 overflow-hidden'>
                   <Image
-                    src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090594/AI%20Suite/ai-hero-image-center-03_zvh4v4.jpg'
+                    src='/discover/9.png'
                     className='object-cover absolute top-0 left-0 w-full h-full'
                     sizes='245px'
                     width={502}
@@ -218,7 +218,7 @@ const Hero: React.FC = () => {
               <div className='col-span-6'>
                 <div className='relative rounded-4xl! h-50 sm:h-58 overflow-hidden'>
                   <Image
-                    src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090593/AI%20Suite/ai-hero-image-center-04_ichuco.jpg'
+                    src='/discover/10.png'
                     className='object-cover absolute top-0 left-0 w-full h-full'
                     sizes='245px'
                     width={502}
@@ -236,7 +236,7 @@ const Hero: React.FC = () => {
           variants={motionEnabled ? slideInRight : undefined}>
           <div className='col-span-6 h-50 md:h-75 rounded-4xl relative overflow-hidden'>
             <Image
-              src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734090593/AI%20Suite/ai-hero-image-right-01_zwke6n.jpg'
+              src='/discover/11.png'
               className='object-cover absolute top-0 left-0 w-full h-full'
               sizes='300px'
               width={600}
@@ -246,7 +246,7 @@ const Hero: React.FC = () => {
           </div>
           <div className='col-span-6 h-50 md:h-75 rounded-4xl relative overflow-hidden'>
             <Image
-              src='https://res.cloudinary.com/da2yfyikz/image/upload/v1734093990/AI%20Suite/ai-hero-image-right-02_d7evrm.jpg'
+              src='/discover/12.png'
               className='object-cover absolute top-0 left-0 w-full h-full'
               sizes='300px'
               width={600}

@@ -6,10 +6,13 @@ import { jsonError } from '@/lib/http';
 import { prisma } from '@/lib/prisma';
 import { getReplicateImageUrl } from '@/lib/services/image-generation';
 import {
+  buildGeneratedImageProxyUrl,
+  uploadGeneratedImageFromUrl,
+} from '@/lib/server/generated-images';
+import {
   deleteUsageHistoryEntry,
   finalizeUsageHistoryEntry,
 } from '@/lib/services/usage-history';
-import { saveGeneratedImageFromUrl } from '@/lib/server/generated-images';
 
 export const runtime = 'nodejs';
 
@@ -140,18 +143,24 @@ export async function POST(request: NextRequest) {
     imageUrl,
   });
 
-  await saveGeneratedImageFromUrl(usage.id, imageUrl);
+  const uploadedImage = await uploadGeneratedImageFromUrl({
+    userId: usage.userId,
+    usageId: usage.id,
+    imageUrl,
+  });
 
-  const publicImageUrl = `/api/images?imageId=${usage.id}`;
   const updatedUsage = await finalizeUsageHistoryEntry(
     usage.id,
-    publicImageUrl,
+    uploadedImage.objectKey,
   );
+
+  const publicImageUrl = buildGeneratedImageProxyUrl(usage.id);
 
   console.log('[replicate-webhook] finalized usage history', {
     usageId,
     predictionId: prediction.id,
-    outputImage: publicImageUrl,
+    outputImage: uploadedImage.objectKey,
+    proxyUrl: publicImageUrl,
   });
 
   return NextResponse.json(

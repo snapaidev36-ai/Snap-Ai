@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -14,10 +15,14 @@ import { pageContainer } from '@/lib/motion/variants';
 
 type DashboardPageClientProps = {
   initialSidebarCollapsed: boolean;
+  children?: ReactNode;
+  contentClassName?: string;
 };
 
 export default function DashboardPageClient({
   initialSidebarCollapsed,
+  children,
+  contentClassName,
 }: DashboardPageClientProps) {
   const router = useRouter();
   const clearUser = useAuthStore(state => state.clearUser);
@@ -58,7 +63,7 @@ export default function DashboardPageClient({
 
           <div className='min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6'>
             <motion.div
-              className='mx-auto flex w-full max-w-5xl flex-col gap-5 sm:gap-6'
+              className={`mx-auto flex w-full flex-col gap-5 sm:gap-6 ${contentClassName ?? 'max-w-5xl'}`}
               variants={prefersReducedMotion ? undefined : pageContainer}
               initial={prefersReducedMotion ? undefined : 'hidden'}
               animate={prefersReducedMotion ? undefined : 'show'}>
@@ -70,8 +75,12 @@ export default function DashboardPageClient({
                 </p>
               ) : null}
 
-              <GreetingHero />
-              <PromptComposer />
+              {children ?? (
+                <>
+                  <GreetingHero />
+                  <PromptComposer />
+                </>
+              )}
             </motion.div>
           </div>
         </div>

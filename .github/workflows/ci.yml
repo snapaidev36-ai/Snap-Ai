@@ -61,6 +61,12 @@ jobs:
             NEXT_PUBLIC_FIREBASE_APP_ID: 1:1234567890:web:abcdef123456
             NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: G-TEST123
             REPLICATE_API_KEY: ci-replicate-api-key
+            R2_S3_ENDPOINT: https://ci-r2-account-id.r2.cloudflarestorage.com
+            R2_ACCOUNT_ID: ci-r2-account-id
+            R2_ACCOUNT_TOKEN: ci-r2-account-token
+            R2_ACCESS_ID: ci-r2-access-id
+            R2_SECRET_ACCESS_KEY: ci-r2-secret-access-key
+            R2_BUCKET_NAME: snap-ai
 
         steps:
             - name: Checkout

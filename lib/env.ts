@@ -54,6 +54,15 @@ const envSchema = z.object({
   REPLICATE_API_KEY: z.string().min(1, 'REPLICATE_API_KEY is required'),
   APP_URL: z.string().url().optional(),
   REPLICATE_WEBHOOK_SIGNING_SECRET: z.string().min(1).optional(),
+  R2_S3_ENDPOINT: z
+    .string()
+    .url('R2_S3_ENDPOINT must be a valid URL')
+    .min(1, 'R2_S3_ENDPOINT is required'),
+  R2_ACCOUNT_ID: z.string().min(1, 'R2_ACCOUNT_ID is required'),
+  R2_ACCOUNT_TOKEN: z.string().min(1, 'R2_ACCOUNT_TOKEN is required'),
+  R2_ACCESS_ID: z.string().min(1, 'R2_ACCESS_ID is required'),
+  R2_SECRET_ACCESS_KEY: z.string().min(1, 'R2_SECRET_ACCESS_KEY is required'),
+  R2_BUCKET_NAME: z.string().min(1, 'R2_BUCKET_NAME is required'),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

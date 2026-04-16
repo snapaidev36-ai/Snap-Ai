@@ -1,8 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { requireCurrentUser } from '@/lib/auth/current-user';
 import { buildGeneratedImageProxyUrl } from '@/lib/server/generated-images';
-import { listUsageHistoryGallery } from '@/lib/services/usage-history';
+import { listCommunityFeed } from '@/lib/services/usage-history';
 
 export const runtime = 'nodejs';
 
@@ -24,17 +23,10 @@ function parseLimit(value: string | null) {
 }
 
 export async function GET(request: NextRequest) {
-  const authResult = await requireCurrentUser(request);
-
-  if ('error' in authResult) {
-    return authResult.error;
-  }
-
   const cursor = request.nextUrl.searchParams.get('cursor');
   const limit = parseLimit(request.nextUrl.searchParams.get('limit'));
 
-  const page = await listUsageHistoryGallery({
-    userId: authResult.user.id,
+  const page = await listCommunityFeed({
     cursor: cursor || null,
     limit,
   });
@@ -49,7 +41,8 @@ export async function GET(request: NextRequest) {
       aspectRatio: item.aspectRatio,
       style: item.style,
       createdAt: item.createdAt,
-      imageUrl: buildGeneratedImageProxyUrl(item.id),
+      user: item.user,
+      imageUrl: buildGeneratedImageProxyUrl(item.id, 'community'),
     })),
     nextCursor: page.nextCursor,
   });
