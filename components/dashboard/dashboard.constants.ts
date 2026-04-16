@@ -30,14 +30,6 @@ export const DASHBOARD_NAV_ITEMS: DashboardNavItem[] = [
   },
 ];
 
-export const RECENT_PROMPTS = [
-  'A warrior riding a massive dragon over snowy cliffs',
-  'A rainy cyberpunk street at night with neon reflections',
-  'Minimalist cinematic portrait with soft side lighting',
-];
-
-export const ASPECT_RATIO_OPTIONS = [
-  ...GENERATION_ASPECT_RATIO_OPTIONS,
-];
+export const ASPECT_RATIO_OPTIONS = [...GENERATION_ASPECT_RATIO_OPTIONS];
 
 export const STYLE_OPTIONS = [...GENERATION_STYLE_OPTIONS];

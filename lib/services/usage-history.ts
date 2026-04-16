@@ -22,6 +22,8 @@ export type CommunityFeedPage = {
 
 const DEFAULT_GALLERY_LIMIT = 20;
 const MAX_GALLERY_LIMIT = 50;
+const DEFAULT_RECENT_PROMPTS_LIMIT = 3;
+const MAX_RECENT_PROMPTS_LIMIT = 3;
 
 const aspectRatioToPrismaValue: Record<AspectRatioValue, PrismaAspectRatio> = {
   '1:1': PrismaAspectRatio.RATIO_1_1,
@@ -94,6 +96,14 @@ function clampLimit(limit?: number) {
   }
 
   return Math.min(Math.max(Math.trunc(limit), 1), MAX_GALLERY_LIMIT);
+}
+
+function clampRecentPromptsLimit(limit?: number) {
+  if (!limit || Number.isNaN(limit)) {
+    return DEFAULT_RECENT_PROMPTS_LIMIT;
+  }
+
+  return Math.min(Math.max(Math.trunc(limit), 1), MAX_RECENT_PROMPTS_LIMIT);
 }
 
 export async function recordUsageHistory(input: UsageHistoryRecordInput) {
@@ -356,4 +366,27 @@ export async function listCommunityFeed(
     items: pageItems,
     nextCursor,
   };
+}
+
+export async function listLatestUserPrompts(
+  userId: string,
+  limit?: number,
+): Promise<string[]> {
+  const take = clampRecentPromptsLimit(limit);
+
+  const rows = await prisma.usageHistory.findMany({
+    where: {
+      userId,
+      outputImage: {
+        not: '',
+      },
+    },
+    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    take,
+    select: {
+      prompt: true,
+    },
+  });
+
+  return rows.map(row => row.prompt);
 }
