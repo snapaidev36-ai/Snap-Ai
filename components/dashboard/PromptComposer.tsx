@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 
-import { RECENT_PROMPTS } from '@/components/dashboard/dashboard.constants';
 import { Separator } from '@/components/ui/separator';
 import { sectionContainer, slideDown } from '@/lib/motion/variants';
 import type { AspectRatioValue, StyleValue } from '@/lib/generation/options';
@@ -17,7 +16,11 @@ import RecentPromptsChips from '@/components/dashboard/prompt-composer/RecentPro
 import { usePromptComposerGeneration } from '@/components/dashboard/prompt-composer/usePromptComposerGeneration';
 import { useVoiceInput } from '@/components/dashboard/prompt-composer/useVoiceInput';
 
-export default function PromptComposer() {
+type PromptComposerProps = {
+  recentPrompts: string[];
+};
+
+export default function PromptComposer({ recentPrompts }: PromptComposerProps) {
   const [promptInput, setPromptInput] = useState('');
   const [aspectRatio, setAspectRatio] = useState<AspectRatioValue>('4:3');
   const [style, setStyle] = useState<StyleValue>('cinematic');
@@ -69,11 +72,13 @@ export default function PromptComposer() {
     <motion.section
       className='space-y-3'
       variants={prefersReducedMotion ? undefined : sectionContainer}>
-      <RecentPromptsChips
-        prompts={RECENT_PROMPTS}
-        reduceMotion={Boolean(prefersReducedMotion)}
-        onPromptSelect={appendPromptFromChip}
-      />
+      {recentPrompts.length > 0 ? (
+        <RecentPromptsChips
+          prompts={recentPrompts}
+          reduceMotion={Boolean(prefersReducedMotion)}
+          onPromptSelect={appendPromptFromChip}
+        />
+      ) : null}
 
       <motion.div
         variants={prefersReducedMotion ? undefined : slideDown}

@@ -27,6 +27,55 @@ type AuthResult =
       error: NextResponse;
     };
 
+type CookieStoreLike = {
+  get(name: string): { value?: string } | undefined;
+};
+
+class CurrentUserNotFoundError extends Error {
+  constructor() {
+    super('User not found');
+    this.name = 'CurrentUserNotFoundError';
+  }
+}
+
+async function findCurrentUser(accessToken: string): Promise<CurrentUser> {
+  const payload = await verifyAccessToken(accessToken);
+
+  const user = await prisma.user.findUnique({
+    where: { id: payload.userId },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      credits: true,
+      createdAt: true,
+    },
+  });
+
+  if (!user) {
+    throw new CurrentUserNotFoundError();
+  }
+
+  return user;
+}
+
+export async function getCurrentUserFromCookies(
+  cookieStore: CookieStoreLike,
+): Promise<CurrentUser | null> {
+  const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE_NAME)?.value;
+
+  if (!accessToken) {
+    return null;
+  }
+
+  try {
+    return await findCurrentUser(accessToken);
+  } catch {
+    return null;
+  }
+}
+
 export async function requireCurrentUser(
   request: NextRequest,
 ): Promise<AuthResult> {
@@ -39,28 +88,14 @@ export async function requireCurrentUser(
   }
 
   try {
-    const payload = await verifyAccessToken(accessToken);
-
-    const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        credits: true,
-        createdAt: true,
-      },
-    });
-
-    if (!user) {
+    return { user: await findCurrentUser(accessToken) };
+  } catch (error) {
+    if (error instanceof CurrentUserNotFoundError) {
       return {
         error: jsonError('User not found', 404),
       };
     }
 
-    return { user };
-  } catch (error) {
     return {
       error: jsonError(
         isTokenExpiredError(error)

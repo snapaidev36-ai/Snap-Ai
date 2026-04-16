@@ -15,12 +15,14 @@ import { pageContainer } from '@/lib/motion/variants';
 
 type DashboardPageClientProps = {
   initialSidebarCollapsed: boolean;
+  recentPrompts?: string[];
   children?: ReactNode;
   contentClassName?: string;
 };
 
 export default function DashboardPageClient({
   initialSidebarCollapsed,
+  recentPrompts = [],
   children,
   contentClassName,
 }: DashboardPageClientProps) {
@@ -63,7 +65,7 @@ export default function DashboardPageClient({
 
           <div className='min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6'>
             <motion.div
-              className={`mx-auto flex w-full flex-col gap-5 sm:gap-6 ${contentClassName ?? 'max-w-5xl'}`}
+              className={`mx-auto flex w-full flex-col gap-5 sm:gap-6 ${contentClassName ?? 'max-w-6xl'}`}
               variants={prefersReducedMotion ? undefined : pageContainer}
               initial={prefersReducedMotion ? undefined : 'hidden'}
               animate={prefersReducedMotion ? undefined : 'show'}>
@@ -78,7 +80,7 @@ export default function DashboardPageClient({
               {children ?? (
                 <>
                   <GreetingHero />
-                  <PromptComposer />
+                  <PromptComposer recentPrompts={recentPrompts} />
                 </>
               )}
             </motion.div>
