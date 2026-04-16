@@ -7,6 +7,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
+import { imageSize } from 'image-size';
 import mime from 'mime-types';
 
 import { env } from '@/lib/env';
@@ -29,6 +30,11 @@ export type GeneratedImageVariant = 'gallery' | 'community';
 export type UploadedGeneratedImage = {
   objectKey: string;
   contentType: string;
+};
+
+type GeneratedImageDimensions = {
+  width: number | null;
+  height: number | null;
 };
 
 export function buildGeneratedImageProxyUrl(
@@ -101,11 +107,37 @@ function escapeXml(value: string) {
     .replaceAll("'", '&apos;');
 }
 
-export function buildCommunityWatermarkSvg(imageDataUri: string) {
+function getGeneratedImageDimensions(body: Buffer): GeneratedImageDimensions {
+  try {
+    const dimensions = imageSize(body);
+
+    if (!dimensions.width || !dimensions.height) {
+      return { width: null, height: null };
+    }
+
+    return {
+      width: dimensions.width,
+      height: dimensions.height,
+    };
+  } catch {
+    return { width: null, height: null };
+  }
+}
+
+export function buildCommunityWatermarkSvg(
+  imageDataUri: string,
+  dimensions: GeneratedImageDimensions,
+) {
   const safeImageDataUri = escapeXml(imageDataUri);
+  const width = dimensions.width ?? 1000;
+  const height = dimensions.height ?? 1000;
+  const watermarkFontSize = Math.max(
+    Math.round(Math.min(width, height) * 0.035),
+    12,
+  );
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
+<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid slice">
   <defs>
     <linearGradient id="overlay" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#000000" stop-opacity="0.02" />
@@ -115,7 +147,7 @@ export function buildCommunityWatermarkSvg(imageDataUri: string) {
   <rect width="100%" height="100%" fill="#111111" />
   <image href="${safeImageDataUri}" x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" />
   <rect width="100%" height="100%" fill="url(#overlay)" />
-  <text x="952" y="946" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#ffffff" fill-opacity="0.42" letter-spacing="0.12em">SNAP AI</text>
+  <text x="95%" y="95%" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="${watermarkFontSize}" font-weight="700" fill="#ffffff" fill-opacity="0.42" letter-spacing="0.12em">SNAP AI</text>
 </svg>`;
 }
 
@@ -180,9 +212,11 @@ export async function readGeneratedImageFromStorage(objectKey: string) {
   }
 
   const body = await readBodyToBuffer(response.Body);
+  const dimensions = getGeneratedImageDimensions(body);
 
   return {
     body,
     contentType: response.ContentType ?? 'image/png',
+    ...dimensions,
   };
 }

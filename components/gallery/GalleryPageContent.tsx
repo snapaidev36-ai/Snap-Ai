@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 import GeneratedImageGridSkeleton from '@/components/media/GeneratedImageGridSkeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { apiClient } from '@/lib/client/api';
-import { cn } from '@/lib/utils';
+import { formatDate } from '@/lib/helpers';
 
 type GalleryApiItem = {
   id: string;
@@ -26,21 +26,6 @@ type GalleryResponse = {
   items: GalleryApiItem[];
   nextCursor: string | null;
 };
-
-const ASPECT_RATIO_CLASS: Record<GalleryApiItem['aspectRatio'], string> = {
-  '1:1': 'aspect-square',
-  '4:3': 'aspect-[4/3]',
-  '9:16': 'aspect-[9/16]',
-  '16:9': 'aspect-[16/9]',
-};
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat('en', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(value));
-}
 
 export default function GalleryPageContent() {
   const [items, setItems] = useState<GalleryApiItem[]>([]);
@@ -153,11 +138,7 @@ export default function GalleryPageContent() {
         <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
           {items.map(item => (
             <Card key={item.id} className='group gap-0 overflow-hidden py-0'>
-              <div
-                className={cn(
-                  'relative overflow-hidden',
-                  ASPECT_RATIO_CLASS[item.aspectRatio],
-                )}>
+              <div className='relative aspect-square overflow-hidden'>
                 <Image
                   src={item.imageUrl}
                   alt={item.prompt}
@@ -168,22 +149,16 @@ export default function GalleryPageContent() {
                 />
               </div>
               <CardHeader className='space-y-2 px-4 pt-4'>
-                <div className='flex items-center justify-between gap-3'>
-                  <CardTitle className='truncate text-base'>
-                    {item.prompt}
-                  </CardTitle>
-                  <Badge variant='secondary' className='shrink-0'>
-                    {item.style}
-                  </Badge>
-                </div>
+                <Badge variant='secondary' className='shrink-0 max-w-max'>
+                  {item.style}
+                </Badge>
                 <p className='text-muted-foreground text-sm'>
                   {formatDate(item.createdAt)} · {item.aspectRatio}
                 </p>
               </CardHeader>
               <CardContent className='px-4 pb-4'>
                 <p className='text-muted-foreground text-sm leading-6'>
-                  Credits used: {item.creditsDeducted}. The final asset is
-                  served through the proxy route at full fidelity.
+                  {item.prompt}
                 </p>
               </CardContent>
             </Card>

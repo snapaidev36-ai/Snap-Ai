@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { apiClient } from '@/lib/client/api';
-import { cn } from '@/lib/utils';
+import { formatDate } from '@/lib/helpers';
 
 type CommunityApiItem = {
   id: string;
@@ -30,20 +30,6 @@ type CommunityResponse = {
   items: CommunityApiItem[];
   nextCursor: string | null;
 };
-
-const ASPECT_RATIO_CLASS: Record<CommunityApiItem['aspectRatio'], string> = {
-  '1:1': 'aspect-square',
-  '4:3': 'aspect-[4/3]',
-  '9:16': 'aspect-[9/16]',
-  '16:9': 'aspect-[16/9]',
-};
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat('en', {
-    month: 'short',
-    day: 'numeric',
-  }).format(new Date(value));
-}
 
 function getAuthorName(user: CommunityApiItem['user']) {
   return `${user.firstName} ${user.lastName}`.trim();
@@ -160,16 +146,15 @@ export default function CommunityPageContent() {
         ) : null}
 
         {isLoading ? (
-          <GeneratedImageGridSkeleton count={9} imageClassName='aspect-[4/5]' />
+          <GeneratedImageGridSkeleton
+            count={9}
+            imageClassName='aspect-square'
+          />
         ) : items.length > 0 ? (
           <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
             {items.map(item => (
               <Card key={item.id} className='group gap-0 overflow-hidden py-0'>
-                <div
-                  className={cn(
-                    'relative overflow-hidden',
-                    ASPECT_RATIO_CLASS[item.aspectRatio],
-                  )}>
+                <div className='relative aspect-square overflow-hidden'>
                   <Image
                     src={item.imageUrl}
                     alt={item.prompt}

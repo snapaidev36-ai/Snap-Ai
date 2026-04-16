@@ -84,6 +84,10 @@ export async function GET(request: NextRequest) {
 
     const svg = buildCommunityWatermarkSvg(
       `data:${asset.contentType};base64,${Buffer.from(asset.body).toString('base64')}`,
+      {
+        width: asset.width,
+        height: asset.height,
+      },
     );
 
     return new NextResponse(svg, {

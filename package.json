@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && next dev",
+    "dev": "prisma generate && next dev -p 8001",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint && npm run lint:viewport",
@@ -32,6 +32,7 @@
     "firebase": "^12.11.0",
     "firebase-admin": "^13.7.0",
     "framer-motion": "^12.38.0",
+    "image-size": "^2.0.2",
     "jose": "^6.2.2",
     "lucide-react": "^0.552.0",
     "mime-types": "^3.0.2",

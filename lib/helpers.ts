@@ -13,3 +13,14 @@ export function getErrorMessage(error: unknown) {
 
   return 'Unable to sign in with Google. Please try again.';
 }
+
+export function formatDate(
+  value: string,
+  options: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  },
+) {
+  return new Intl.DateTimeFormat('en', options).format(new Date(value));
+}
