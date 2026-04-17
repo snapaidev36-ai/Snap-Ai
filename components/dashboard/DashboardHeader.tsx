@@ -1,8 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { Bell, Menu, Sparkles } from 'lucide-react';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import DashboardBreadcrumbs from '@/components/dashboard/DashboardBreadcrumbs';
+import { getInitials } from '@/lib/helpers';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { useSidebarStore } from '@/lib/store/sidebar-store';
 
@@ -39,14 +41,6 @@ function createAvatarStyle(seed: string) {
     backgroundColor: `hsl(${hue} 74% 42%)`,
     color: 'hsl(0 0% 100%)',
   };
-}
-
-function getInitials(firstName?: string, lastName?: string) {
-  const first = firstName?.trim().charAt(0) ?? '';
-  const last = lastName?.trim().charAt(0) ?? '';
-  const initials = `${first}${last}`.toUpperCase();
-
-  return initials || 'AI';
 }
 
 export default function DashboardHeader({
@@ -101,6 +95,9 @@ export default function DashboardHeader({
                 variant='ghost'
                 className='h-10 gap-2 rounded-full px-1.5 sm:px-2'>
                 <Avatar className='size-8'>
+                  {user?.profileImageUrl ? (
+                    <AvatarImage src={user.profileImageUrl} alt={fullName} />
+                  ) : null}
                   <AvatarFallback style={createAvatarStyle(fullName)}>
                     {initials}
                   </AvatarFallback>
@@ -118,7 +115,9 @@ export default function DashboardHeader({
                 </p>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Account</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href='/account'>Account</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem>Billing</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

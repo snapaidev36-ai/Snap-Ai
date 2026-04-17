@@ -10,6 +10,7 @@ import { verifyPassword } from '@/lib/auth/password';
 import { jsonError, jsonValidationError } from '@/lib/http';
 import { prisma } from '@/lib/prisma';
 import { loginSchema } from '@/lib/validation/auth';
+import { toAuthUser } from '@/lib/auth/user-profile';
 
 export const runtime = 'nodejs';
 
@@ -40,6 +41,7 @@ export async function POST(request: Request) {
         authProvider: true,
         credits: true,
         createdAt: true,
+        profileImageKey: true,
       },
     });
 
@@ -63,14 +65,7 @@ export async function POST(request: Request) {
 
     const response = NextResponse.json({
       message: 'Login successful',
-      user: {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        credits: user.credits,
-        createdAt: user.createdAt,
-      },
+      user: toAuthUser(user),
     });
 
     setAccessTokenCookie(response, accessToken);

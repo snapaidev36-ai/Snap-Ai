@@ -15,6 +15,7 @@ export type CurrentUser = {
   email: string;
   credits: number;
   createdAt: Date;
+  profileImageKey: string | null;
 };
 
 type AuthResult =
@@ -50,6 +51,7 @@ async function findCurrentUser(accessToken: string): Promise<CurrentUser> {
       email: true,
       credits: true,
       createdAt: true,
+      profileImageKey: true,
     },
   });
 

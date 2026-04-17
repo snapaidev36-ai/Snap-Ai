@@ -2,28 +2,15 @@ import 'server-only';
 
 import { Buffer } from 'node:buffer';
 
-import {
-  GetObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { imageSize } from 'image-size';
-import mime from 'mime-types';
 
 import { env } from '@/lib/env';
+import { getFileExtensionFromContentType } from '@/lib/helpers';
+import { r2Client } from '@/lib/server/r2';
 
 const GENERATED_IMAGE_FOLDER = 'snap-ai/generated';
 const R2_CACHE_CONTROL = 'private, no-store';
-
-const r2Client = new S3Client({
-  region: 'auto',
-  endpoint: env.R2_S3_ENDPOINT,
-  forcePathStyle: true,
-  credentials: {
-    accessKeyId: env.R2_ACCESS_ID,
-    secretAccessKey: env.R2_SECRET_ACCESS_KEY,
-  },
-});
 
 export type GeneratedImageVariant = 'gallery' | 'community';
 
@@ -50,26 +37,12 @@ export function buildGeneratedImageProxyUrl(
   return `/api/images?${searchParams.toString()}`;
 }
 
-function getFileExtension(contentType: string) {
-  const normalizedContentType = contentType
-    .split(';', 1)[0]
-    .trim()
-    .toLowerCase();
-  const extension = mime.extension(normalizedContentType);
-
-  if (typeof extension === 'string' && extension.length > 0) {
-    return `.${extension}`;
-  }
-
-  return '.png';
-}
-
 function getGeneratedImageObjectKey(input: {
   userId: string;
   usageId: string;
   contentType: string;
 }) {
-  const extension = getFileExtension(input.contentType);
+  const extension = getFileExtensionFromContentType(input.contentType);
 
   return `${GENERATED_IMAGE_FOLDER}/${input.userId}/${input.usageId}${extension}`;
 }

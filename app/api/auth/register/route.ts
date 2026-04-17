@@ -6,6 +6,7 @@ import { hashPassword } from '@/lib/auth/password';
 import { jsonError, jsonValidationError } from '@/lib/http';
 import { prisma } from '@/lib/prisma';
 import { registerSchema } from '@/lib/validation/auth';
+import { toAuthUser } from '@/lib/auth/user-profile';
 
 export const runtime = 'nodejs';
 
@@ -29,7 +30,6 @@ export async function POST(request: Request) {
       where: { email: parsed.data.email },
       select: { id: true },
     });
-    console.log('Existing user check result:', existingUser); // Debug log
     if (existingUser) {
       return jsonError('Email is already registered', 409);
     }
@@ -51,19 +51,18 @@ export async function POST(request: Request) {
         email: true,
         credits: true,
         createdAt: true,
+        profileImageKey: true,
       },
     });
 
     return NextResponse.json(
       {
         message: 'Account created successfully',
-        user,
+        user: toAuthUser(user),
       },
       { status: 201 },
     );
   } catch (error) {
-    console.error('Error during user registration:', error); // Debug log
-
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === 'P2002'

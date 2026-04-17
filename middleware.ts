@@ -94,6 +94,7 @@ export const config = {
   matcher: [
     '/login',
     '/dashboard/:path*',
+    '/account/:path*',
     '/profile/:path*',
     '/gallery/:path*',
   ],

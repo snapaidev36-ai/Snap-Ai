@@ -8,21 +8,25 @@ datasource db {
 }
 
 model User {
-    id           String         @id @default(auto()) @map("_id") @db.ObjectId
-    firstName    String
-    lastName     String
-    email        String         @unique
-    password     String?
-    firebaseUid  String?
-    authProvider String         @default("email")
-    credits      Int            @default(0)
-    createdAt    DateTime       @default(now())
-    updatedAt    DateTime       @updatedAt
-    usageHistory UsageHistory[]
+    id                           String         @id @default(auto()) @map("_id") @db.ObjectId
+    firstName                    String
+    lastName                     String
+    email                        String         @unique
+    password                     String?
+    firebaseUid                  String?
+    authProvider                 String         @default("email")
+    profileImageKey              String?
+    passwordChangeTokenHash      String?
+    passwordChangeTokenExpiresAt DateTime?
+    credits                      Int            @default(0)
+    createdAt                    DateTime       @default(now())
+    updatedAt                    DateTime       @updatedAt
+    usageHistory                 UsageHistory[]
 
     @@index([credits])
     @@index([lastName, firstName])
     @@index([authProvider])
+    @@index([passwordChangeTokenHash])
 }
 
 model UsageHistory {
