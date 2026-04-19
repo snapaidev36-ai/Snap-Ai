@@ -17,6 +17,7 @@ const ROUTE_LABELS: Record<string, string> = {
   gallery: 'Gallery',
   community: 'Community',
   account: 'Account',
+  billing: 'Billing',
   discover: 'Discover',
   pricing: 'Pricing',
   login: 'Login',
