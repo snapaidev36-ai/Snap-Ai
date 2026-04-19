@@ -42,6 +42,35 @@ export function getErrorMessage(error: unknown) {
   return 'Unable to sign in with Google. Please try again.';
 }
 
+export function normalizeStatus(status?: string) {
+  const value = status?.trim().toLowerCase();
+
+  if (!value) {
+    return undefined;
+  }
+
+  if (
+    value === 'success' ||
+    value === 'succeeded' ||
+    value === 'completed' ||
+    value === 'ok'
+  ) {
+    return 'success' as const;
+  }
+
+  if (
+    value === 'failed' ||
+    value === 'failure' ||
+    value === 'cancelled' ||
+    value === 'canceled' ||
+    value === 'error'
+  ) {
+    return 'failed' as const;
+  }
+
+  return undefined;
+}
+
 export function formatDate(
   value: string,
   options: Intl.DateTimeFormatOptions = {

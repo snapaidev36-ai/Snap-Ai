@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { Bell, Menu, Sparkles } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import DashboardBreadcrumbs from '@/components/dashboard/DashboardBreadcrumbs';
+import { Menu, Sparkles } from '@/lib/icons';
 import { getInitials } from '@/lib/helpers';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { useSidebarStore } from '@/lib/store/sidebar-store';
@@ -79,14 +79,6 @@ export default function DashboardHeader({
             variant='secondary'>
             <Sparkles className='mr-1 size-3.5' /> Credits: {credits}
           </Badge>
-
-          <Button
-            type='button'
-            variant='ghost'
-            size='icon'
-            aria-label='Notifications'>
-            <Bell className='size-4' />
-          </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

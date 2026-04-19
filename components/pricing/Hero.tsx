@@ -7,14 +7,8 @@ import { useRouter } from 'next/navigation';
 const Hero: React.FC = () => {
   const router = useRouter();
 
-  const isAuth = false; // hardcoded (change for testing)
-
   const handleClick = () => {
-    if (isAuth) {
-      router.push('/dashboard');
-    } else {
-      alert('Redirect to login modal');
-    }
+    router.push('/pricing');
   };
 
   return (
@@ -33,7 +27,7 @@ const Hero: React.FC = () => {
 
             <button
               onClick={handleClick}
-              className='block h-12 bg-purple-600 text-white hover:opacity-90 rounded-full min-w-40 px-4 mx-auto min-[600px]:mx-0 font-bold mt-8 md:mt-[4vw] xl:mt-[3vw]'>
+              className='block h-12 cursor-pointer bg-purple-600 text-white hover:opacity-90 rounded-full min-w-40 px-4 mx-auto min-[600px]:mx-0 font-bold mt-8 md:mt-[4vw] xl:mt-[3vw]'>
               Get Started Now
             </button>
           </div>

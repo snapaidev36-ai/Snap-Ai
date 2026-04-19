@@ -7,10 +7,10 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 
 import { signInWithGoogleUsingFirebase } from '@/lib/client/firebase';
 import { cleanString, getErrorMessage, getFirstMessage } from '@/lib/helpers';
+import { Eye, EyeOff, Lock, Mail } from '@/lib/icons';
 import { useAuthStore } from '@/lib/store/auth-store';
 import {
   Form,

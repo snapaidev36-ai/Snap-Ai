@@ -3,6 +3,8 @@ import 'server-only';
 import { Resend } from 'resend';
 
 import { env } from '@/lib/env';
+import { buildPaymentFailedEmail } from '@/lib/email/templates/payment-failed';
+import { buildPaymentSuccessEmail } from '@/lib/email/templates/payment-success';
 import { buildPasswordChangeEmail } from '@/lib/email/templates/password-change';
 import { buildVerifyEmail } from '@/lib/email/templates/verify-email';
 
@@ -20,6 +22,26 @@ type SendVerifyEmailInput = {
   to: string;
   firstName: string;
   verifyEmailUrl: string;
+};
+
+type SendPaymentSuccessEmailInput = {
+  siteUrl: string;
+  to: string;
+  firstName: string;
+  planName: string;
+  credits: number;
+  amount: number;
+  dashboardUrl: string;
+};
+
+type SendPaymentFailedEmailInput = {
+  siteUrl: string;
+  to: string;
+  firstName: string;
+  planName: string;
+  credits: number;
+  amount: number;
+  retryUrl: string;
 };
 
 export async function sendPasswordChangeEmail({
@@ -53,6 +75,60 @@ export async function sendVerifyEmail({
     siteUrl,
     firstName,
     verifyEmailUrl,
+  });
+
+  await resend.emails.send({
+    from: env.RESEND_FROM,
+    to,
+    subject: template.subject,
+    text: template.text,
+    html: template.html,
+  });
+}
+
+export async function sendPaymentSuccessEmail({
+  siteUrl,
+  to,
+  firstName,
+  planName,
+  credits,
+  amount,
+  dashboardUrl,
+}: SendPaymentSuccessEmailInput) {
+  const template = buildPaymentSuccessEmail({
+    siteUrl,
+    firstName,
+    planName,
+    credits,
+    amount,
+    dashboardUrl,
+  });
+
+  await resend.emails.send({
+    from: env.RESEND_FROM,
+    to,
+    subject: template.subject,
+    text: template.text,
+    html: template.html,
+  });
+}
+
+export async function sendPaymentFailedEmail({
+  siteUrl,
+  to,
+  firstName,
+  planName,
+  credits,
+  amount,
+  retryUrl,
+}: SendPaymentFailedEmailInput) {
+  const template = buildPaymentFailedEmail({
+    siteUrl,
+    firstName,
+    planName,
+    credits,
+    amount,
+    retryUrl,
   });
 
   await resend.emails.send({

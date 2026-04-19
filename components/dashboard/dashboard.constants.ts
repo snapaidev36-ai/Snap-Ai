@@ -1,5 +1,5 @@
-import type { LucideIcon } from 'lucide-react';
-import { GalleryVerticalEnd, LayoutDashboard, Users } from 'lucide-react';
+import type { AnimatedIcon } from '@/lib/icons';
+import { GalleryVerticalEnd, LayoutDashboard, Users } from '@/lib/icons';
 
 import {
   ASPECT_RATIO_OPTIONS as GENERATION_ASPECT_RATIO_OPTIONS,
@@ -9,7 +9,7 @@ import {
 export type DashboardNavItem = {
   label: string;
   href: string;
-  icon: LucideIcon;
+  icon: AnimatedIcon;
 };
 
 export const DASHBOARD_NAV_ITEMS: DashboardNavItem[] = [

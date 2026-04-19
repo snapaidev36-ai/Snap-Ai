@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Upload } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -24,6 +23,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Upload } from '@/lib/icons';
 import { toast } from '@/components/ui/sonner';
 import { cleanString, getFirstMessage, getInitials } from '@/lib/helpers';
 import { useAuthStore } from '@/lib/store/auth-store';

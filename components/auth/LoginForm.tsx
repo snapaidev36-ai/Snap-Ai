@@ -6,10 +6,10 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 
 import { signInWithGoogleUsingFirebase } from '@/lib/client/firebase';
 import { getErrorMessage, getFirstMessage } from '@/lib/helpers';
+import { Eye, EyeOff, Lock, Mail } from '@/lib/icons';
 import { useAuthStore } from '@/lib/store/auth-store';
 import type { AuthUser } from '@/lib/types/auth-user';
 import { loginSchema, type LoginInput } from '@/lib/validation/auth';

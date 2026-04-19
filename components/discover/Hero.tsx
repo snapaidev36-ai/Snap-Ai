@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { Button } from '../ui/button';
-import { Download } from 'lucide-react';
+import { Download } from '@/lib/icons';
 
 const Hero: React.FC = () => {
   const handleDownload = async (url: string) => {
