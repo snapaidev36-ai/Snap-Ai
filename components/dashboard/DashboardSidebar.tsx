@@ -5,11 +5,11 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PanelLeft } from 'lucide-react';
 
 import MobileSidebar from '@/components/dashboard/MobileSidebar';
 import DashboardSidebarNav from '@/components/dashboard/DashboardSidebarNav';
 import { Button } from '@/components/ui/button';
+import { PanelLeft } from '@/lib/icons';
 import { useSidebarStore } from '@/lib/store/sidebar-store';
 import { cn } from '@/lib/utils';
 

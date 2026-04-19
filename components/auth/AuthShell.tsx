@@ -8,9 +8,13 @@ import { BackgroundPattern } from '../ui/background-pattern';
 
 type AuthShellProps = {
   children: ReactNode;
+  contentClassName?: string;
 };
 
-export default function AuthShell({ children }: AuthShellProps) {
+export default function AuthShell({
+  children,
+  contentClassName = 'sm:max-w-md',
+}: AuthShellProps) {
   const prefersReducedMotion = useReducedMotion();
   const motionEnabled = !prefersReducedMotion;
 
@@ -20,7 +24,7 @@ export default function AuthShell({ children }: AuthShellProps) {
 
       <div className='relative z-10 flex h-dvh items-center justify-center'>
         <motion.div
-          className='w-full sm:max-w-md'
+          className={`w-full ${contentClassName}`}
           variants={motionEnabled ? fadeUp : undefined}
           initial={motionEnabled ? 'hidden' : false}
           animate={motionEnabled ? 'show' : undefined}>

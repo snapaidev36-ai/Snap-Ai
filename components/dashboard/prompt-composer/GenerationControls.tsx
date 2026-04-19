@@ -1,6 +1,6 @@
 'use client';
 
-import { Mic, Send } from 'lucide-react';
+import { Mic, Send } from '@/lib/icons';
 
 import { Button } from '@/components/ui/button';
 
@@ -40,8 +40,8 @@ export default function GenerationControls({
           aria-label='Generate image from prompt'
           disabled={isGenerating}
           onClick={onGenerate}>
-          <Send className='size-4' />
           {isGenerating ? 'Generating...' : 'Generate'}
+          <Send className='size-4' />
         </Button>
       </div>
 

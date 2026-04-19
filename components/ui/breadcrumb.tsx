@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Link from 'next/link';
-import { ChevronRight, MoreHorizontal } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import { ChevronRight, MoreHorizontal } from '@/lib/icons';
 
 function Breadcrumb({ ...props }: React.ComponentProps<'nav'>) {
   return <nav aria-label='breadcrumb' data-slot='breadcrumb' {...props} />;

@@ -8,28 +8,62 @@ datasource db {
 }
 
 model User {
-    id                           String         @id @default(auto()) @map("_id") @db.ObjectId
+    id                           String          @id @default(auto()) @map("_id") @db.ObjectId
     firstName                    String
     lastName                     String
-    email                        String         @unique
+    email                        String          @unique
     password                     String?
     firebaseUid                  String?
-    authProvider                 String         @default("email")
+    authProvider                 String          @default("email")
     emailVerifiedAt              DateTime?
     emailVerificationTokenHash   String?
     profileImageKey              String?
     passwordChangeTokenHash      String?
     passwordChangeTokenExpiresAt DateTime?
-    credits                      Int            @default(0)
-    createdAt                    DateTime       @default(now())
-    updatedAt                    DateTime       @updatedAt
+    credits                      Int             @default(0)
+    createdAt                    DateTime        @default(now())
+    updatedAt                    DateTime        @updatedAt
     usageHistory                 UsageHistory[]
+    stripePayments               StripePayment[]
 
     @@index([credits])
     @@index([lastName, firstName])
     @@index([authProvider])
     @@index([emailVerificationTokenHash])
     @@index([passwordChangeTokenHash])
+}
+
+model StripePayment {
+    id                      String              @id @default(auto()) @map("_id") @db.ObjectId
+    userId                  String              @db.ObjectId
+    user                    User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+    planKey                 String
+    planName                String
+    stripePriceId           String
+    stripeCheckoutSessionId String?             @unique
+    stripePaymentIntentId   String?             @unique
+    credits                 Int
+    amount                  Int
+    currency                String              @default("usd")
+    status                  StripePaymentStatus @default(PENDING)
+    failureReason           String?
+    successEmailSentAt      DateTime?
+    failureEmailSentAt      DateTime?
+    completedAt             DateTime?
+    failedAt                DateTime?
+    createdAt               DateTime            @default(now())
+    updatedAt               DateTime            @updatedAt
+
+    @@index([userId, createdAt])
+    @@index([status, createdAt])
+    @@index([stripePriceId])
+}
+
+enum StripePaymentStatus {
+    PENDING   @map("pending")
+    COMPLETED @map("completed")
+    FAILED    @map("failed")
+    CANCELED  @map("canceled")
 }
 
 model UsageHistory {

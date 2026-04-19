@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, Lock } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -25,6 +24,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/sonner';
 import { apiClient, ApiClientError } from '@/lib/client/api';
+import { Eye, EyeOff, Lock } from '@/lib/icons';
 import { getFirstMessage } from '@/lib/helpers';
 import {
   passwordUpdateFormSchema,

@@ -68,6 +68,14 @@ const envSchema = z.object({
   R2_ACCESS_ID: z.string().min(1, 'R2_ACCESS_ID is required'),
   R2_SECRET_ACCESS_KEY: z.string().min(1, 'R2_SECRET_ACCESS_KEY is required'),
   R2_BUCKET_NAME: z.string().min(1, 'R2_BUCKET_NAME is required'),
+  STRIPE_SECRET_KEY: z.string().min(1).optional(),
+  STRIPE_PUBLISHABLE_KEY: z.string().min(1).optional(),
+  STRIPE_WEBHOOK_SIGNING_SECRET: z.string().min(1).optional(),
+  STRIPE_SUCCESS_URL: z.string().url().optional(),
+  STRIPE_CANCEL_URL: z.string().url().optional(),
+  STRIPE_BASIC_PRICE_ID: z.string().min(1).optional(),
+  STRIPE_STANDARD_PRICE_ID: z.string().min(1).optional(),
+  STRIPE_PREMIUM_PRICE_ID: z.string().min(1).optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
