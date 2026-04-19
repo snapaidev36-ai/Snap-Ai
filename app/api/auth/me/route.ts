@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
         firstName: true,
         lastName: true,
         email: true,
+        authProvider: true,
         credits: true,
         createdAt: true,
         profileImageKey: true,

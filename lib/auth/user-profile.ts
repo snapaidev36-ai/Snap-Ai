@@ -11,6 +11,7 @@ export function toAuthUser(user: {
   firstName: string;
   lastName: string;
   email: string;
+  authProvider: string;
   credits: number;
   createdAt: Date;
   profileImageKey?: string | null;
@@ -20,6 +21,7 @@ export function toAuthUser(user: {
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
+    authProvider: user.authProvider,
     profileImageUrl: getProfileImageUrl(user.profileImageKey),
     credits: user.credits,
     createdAt: user.createdAt.toISOString(),

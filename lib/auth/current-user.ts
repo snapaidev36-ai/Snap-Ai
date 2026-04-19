@@ -13,6 +13,7 @@ export type CurrentUser = {
   firstName: string;
   lastName: string;
   email: string;
+  authProvider: string;
   credits: number;
   createdAt: Date;
   profileImageKey: string | null;
@@ -49,6 +50,7 @@ async function findCurrentUser(accessToken: string): Promise<CurrentUser> {
       firstName: true,
       lastName: true,
       email: true,
+      authProvider: true,
       credits: true,
       createdAt: true,
       profileImageKey: true,

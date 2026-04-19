@@ -53,6 +53,7 @@ export async function POST(request: Request) {
         firstName: true,
         lastName: true,
         email: true,
+        authProvider: true,
         credits: true,
         createdAt: true,
         profileImageKey: true,

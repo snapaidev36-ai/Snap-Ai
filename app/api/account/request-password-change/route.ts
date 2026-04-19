@@ -16,6 +16,13 @@ export async function POST(request: NextRequest) {
     return authResult.error;
   }
 
+  if (authResult.user.authProvider !== 'email') {
+    return jsonError(
+      'Password updates are only available for email and password accounts. Sign in with Google users already have their password managed by Google.',
+      403,
+    );
+  }
+
   const { token, tokenHash, expiresAt } = createPasswordChangeToken();
 
   await prisma.user.update({
