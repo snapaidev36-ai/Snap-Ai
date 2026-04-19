@@ -67,6 +67,8 @@ jobs:
             R2_ACCESS_ID: ci-r2-access-id
             R2_SECRET_ACCESS_KEY: ci-r2-secret-access-key
             R2_BUCKET_NAME: snap-ai
+            RESEND_API_KEY: ci-resend-api-key
+            RESEND_FROM: "Snap AI <ci@example.com>"
 
         steps:
             - name: Checkout

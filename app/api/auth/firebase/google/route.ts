@@ -12,6 +12,7 @@ import { signAccessToken, signRefreshToken } from '@/lib/auth/tokens';
 import { jsonError, jsonValidationError } from '@/lib/http';
 import { prisma } from '@/lib/prisma';
 import { firebaseGoogleLoginSchema } from '@/lib/validation/auth';
+import { toAuthUser } from '@/lib/auth/user-profile';
 
 export const runtime = 'nodejs';
 
@@ -76,8 +77,10 @@ export async function POST(request: Request) {
         lastName: true,
         email: true,
         authProvider: true,
+        emailVerifiedAt: true,
         credits: true,
         createdAt: true,
+        profileImageKey: true,
       },
     });
 
@@ -88,6 +91,7 @@ export async function POST(request: Request) {
             firebaseUid: decodedToken.uid,
             authProvider:
               existingUser.authProvider === 'email' ? 'email' : 'google',
+            emailVerifiedAt: existingUser.emailVerifiedAt ?? new Date(),
           },
           select: {
             id: true,
@@ -96,6 +100,7 @@ export async function POST(request: Request) {
             email: true,
             credits: true,
             createdAt: true,
+            profileImageKey: true,
           },
         })
       : await prisma.user.create({
@@ -106,6 +111,7 @@ export async function POST(request: Request) {
             password: null,
             firebaseUid: decodedToken.uid,
             authProvider: 'google',
+            emailVerifiedAt: new Date(),
             credits: 0,
           },
           select: {
@@ -115,6 +121,7 @@ export async function POST(request: Request) {
             email: true,
             credits: true,
             createdAt: true,
+            profileImageKey: true,
           },
         });
 
@@ -126,7 +133,7 @@ export async function POST(request: Request) {
     const response = NextResponse.json({
       message: 'Google login successful',
       redirectTo: '/dashboard',
-      user,
+      user: toAuthUser(user),
     });
 
     setAccessTokenCookie(response, accessToken);

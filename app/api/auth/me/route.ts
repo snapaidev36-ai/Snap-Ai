@@ -4,6 +4,7 @@ import { ACCESS_TOKEN_COOKIE_NAME } from '@/lib/auth/cookies';
 import { isTokenExpiredError, verifyAccessToken } from '@/lib/auth/tokens';
 import { jsonError } from '@/lib/http';
 import { prisma } from '@/lib/prisma';
+import { toAuthUser } from '@/lib/auth/user-profile';
 
 export const runtime = 'nodejs';
 
@@ -26,6 +27,7 @@ export async function GET(request: NextRequest) {
         email: true,
         credits: true,
         createdAt: true,
+        profileImageKey: true,
       },
     });
 
@@ -33,7 +35,7 @@ export async function GET(request: NextRequest) {
       return jsonError('User not found', 404);
     }
 
-    const response = NextResponse.json({ user });
+    const response = NextResponse.json({ user: toAuthUser(user) });
     response.headers.set('Cache-Control', 'no-store');
 
     return response;

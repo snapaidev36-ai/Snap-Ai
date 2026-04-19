@@ -54,6 +54,11 @@ const envSchema = z.object({
   REPLICATE_API_KEY: z.string().min(1, 'REPLICATE_API_KEY is required'),
   APP_URL: z.string().url().optional(),
   REPLICATE_WEBHOOK_SIGNING_SECRET: z.string().min(1).optional(),
+  RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is required'),
+  RESEND_FROM: z
+    .string()
+    .min(1, 'RESEND_FROM is required')
+    .default('Snap AI <onboarding@resend.dev>'),
   R2_S3_ENDPOINT: z
     .string()
     .url('R2_S3_ENDPOINT must be a valid URL')

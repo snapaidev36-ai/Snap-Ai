@@ -16,10 +16,12 @@ const ROUTE_LABELS: Record<string, string> = {
   dashboard: 'Dashboard',
   gallery: 'Gallery',
   community: 'Community',
+  account: 'Account',
   discover: 'Discover',
   pricing: 'Pricing',
   login: 'Login',
   register: 'Register',
+  'update-password': 'Update Password',
 };
 
 function formatSegmentLabel(segment: string) {
