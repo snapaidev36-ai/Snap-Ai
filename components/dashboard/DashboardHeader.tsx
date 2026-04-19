@@ -110,7 +110,9 @@ export default function DashboardHeader({
               <DropdownMenuItem asChild>
                 <Link href='/account'>Account</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>Billing</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href='/account/billing'>Billing</Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 variant='destructive'
