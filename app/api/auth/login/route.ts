@@ -39,6 +39,7 @@ export async function POST(request: Request) {
         email: true,
         password: true,
         authProvider: true,
+        emailVerifiedAt: true,
         credits: true,
         createdAt: true,
         profileImageKey: true,
@@ -56,6 +57,13 @@ export async function POST(request: Request) {
 
     if (!isPasswordValid) {
       return jsonError('Invalid email or password', 401);
+    }
+
+    if (!user.emailVerifiedAt) {
+      return jsonError(
+        'Please verify your email address before signing in. Check your inbox for the verification link.',
+        403,
+      );
     }
 
     const [accessToken, refreshToken] = await Promise.all([

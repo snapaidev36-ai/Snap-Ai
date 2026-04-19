@@ -77,6 +77,7 @@ export async function POST(request: Request) {
         lastName: true,
         email: true,
         authProvider: true,
+        emailVerifiedAt: true,
         credits: true,
         createdAt: true,
         profileImageKey: true,
@@ -90,6 +91,7 @@ export async function POST(request: Request) {
             firebaseUid: decodedToken.uid,
             authProvider:
               existingUser.authProvider === 'email' ? 'email' : 'google',
+            emailVerifiedAt: existingUser.emailVerifiedAt ?? new Date(),
           },
           select: {
             id: true,
@@ -109,6 +111,7 @@ export async function POST(request: Request) {
             password: null,
             firebaseUid: decodedToken.uid,
             authProvider: 'google',
+            emailVerifiedAt: new Date(),
             credits: 0,
           },
           select: {

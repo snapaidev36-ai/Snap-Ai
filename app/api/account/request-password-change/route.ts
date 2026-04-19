@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
 
   try {
     await sendPasswordChangeEmail({
+      siteUrl: env.APP_URL ?? request.nextUrl.origin,
       to: authResult.user.email,
       firstName: authResult.user.firstName,
       updatePasswordUrl: `${env.APP_URL ?? request.nextUrl.origin}/update-password?token=${encodeURIComponent(token)}`,

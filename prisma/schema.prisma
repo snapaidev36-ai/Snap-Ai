@@ -15,6 +15,8 @@ model User {
     password                     String?
     firebaseUid                  String?
     authProvider                 String         @default("email")
+    emailVerifiedAt              DateTime?
+    emailVerificationTokenHash   String?
     profileImageKey              String?
     passwordChangeTokenHash      String?
     passwordChangeTokenExpiresAt DateTime?
@@ -26,6 +28,7 @@ model User {
     @@index([credits])
     @@index([lastName, firstName])
     @@index([authProvider])
+    @@index([emailVerificationTokenHash])
     @@index([passwordChangeTokenHash])
 }
 

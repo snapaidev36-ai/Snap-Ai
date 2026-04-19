@@ -110,7 +110,7 @@ export default function UpdatePasswordForm({ token }: UpdatePasswordFormProps) {
   };
 
   return (
-    <Card className='w-full max-w-md shadow-lg'>
+    <Card className='w-full shadow-lg'>
       <CardHeader>
         <CardTitle>Update password</CardTitle>
         <CardDescription>
