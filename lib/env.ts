@@ -26,9 +26,9 @@ const envSchema = z.object({
   FIREBASE_CLIENT_EMAIL: z
     .string()
     .min(1, 'FIREBASE_CLIENT_EMAIL is required for firebase-admin'),
-  FIREBASE_PRIVATE_KEY: z
+  FIREBASE_PRIVATE_KEY_API_KEY_HASH: z
     .string()
-    .min(1, 'FIREBASE_PRIVATE_KEY is required for firebase-admin'),
+    .min(1, 'FIREBASE_PRIVATE_KEY_API_KEY_HASH is required for firebase-admin'),
   NEXT_PUBLIC_FIREBASE_API_KEY: z
     .string()
     .min(1, 'NEXT_PUBLIC_FIREBASE_API_KEY is required'),
