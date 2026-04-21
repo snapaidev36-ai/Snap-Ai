@@ -112,6 +112,22 @@ const Footer: React.FC<FooterProps> = ({ ImageTools = [] }) => {
               >
                 <motion.li variants={motionEnabled ? fadeUp : undefined}>
                   <Link
+                    href='/about'
+                    className='text-base theme:lightText mb-2 block'
+                  >
+                    {'About Us'}
+                  </Link>
+                </motion.li>
+                <motion.li variants={motionEnabled ? fadeUp : undefined}>
+                  <Link
+                    href='/contact'
+                    className='text-base theme:lightText mb-2 block'
+                  >
+                    {'Contact Us'}
+                  </Link>
+                </motion.li>
+                <motion.li variants={motionEnabled ? fadeUp : undefined}>
+                  <Link
                     href="/terms-of-service"
                     className="text-base theme:lightText mb-2 block"
                   >

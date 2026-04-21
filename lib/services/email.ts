@@ -3,6 +3,7 @@ import 'server-only';
 import { Resend } from 'resend';
 
 import { env } from '@/lib/env';
+import { buildContactMessageEmail } from '@/lib/email/templates/contact-message';
 import { buildPaymentFailedEmail } from '@/lib/email/templates/payment-failed';
 import { buildPaymentSuccessEmail } from '@/lib/email/templates/payment-success';
 import { buildPasswordChangeEmail } from '@/lib/email/templates/password-change';
@@ -42,6 +43,15 @@ type SendPaymentFailedEmailInput = {
   credits: number;
   amount: number;
   retryUrl: string;
+};
+
+type SendContactMessageEmailInput = {
+  siteUrl: string;
+  to: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
 };
 
 export async function sendPasswordChangeEmail({
@@ -134,6 +144,32 @@ export async function sendPaymentFailedEmail({
   await resend.emails.send({
     from: env.RESEND_FROM,
     to,
+    subject: template.subject,
+    text: template.text,
+    html: template.html,
+  });
+}
+
+export async function sendContactMessageEmail({
+  siteUrl,
+  to,
+  name,
+  email,
+  subject,
+  message,
+}: SendContactMessageEmailInput) {
+  const template = buildContactMessageEmail({
+    siteUrl,
+    name,
+    email,
+    subject,
+    message,
+  });
+
+  await resend.emails.send({
+    from: env.RESEND_FROM,
+    to,
+    replyTo: email,
     subject: template.subject,
     text: template.text,
     html: template.html,

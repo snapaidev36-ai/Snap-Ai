@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
         status: 200,
         headers: {
           'Content-Type': asset.contentType,
-          'Cache-Control': 'private, no-store',
+          'Cache-Control': 'public, max-age=31536000, immutable',
         },
       });
     } catch {
@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'image/svg+xml; charset=utf-8',
-        'Cache-Control': 'public, no-store',
+        'Cache-Control': 'public, max-age=31536000, immutable',
       },
     });
   } catch {

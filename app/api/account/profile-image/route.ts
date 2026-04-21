@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   return new NextResponse(image.body, {
     headers: {
       'Content-Type': image.contentType,
-      'Cache-Control': 'private, no-store',
+      'Cache-Control': 'public, max-age=31536000, immutable',
     },
   });
 }

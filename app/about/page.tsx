@@ -1,23 +1,23 @@
 import type { Metadata } from 'next';
 
+import AboutPageContent from '@/components/about/AboutPageContent';
 import Footer from '@/components/footer/Footer';
-import Hero from '@/components/discover/Hero';
 import Header from '@/components/header/Header';
 import { buildPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Discover prompts and inspiration',
+  title: 'About us',
   description:
-    'Browse Snap AI discoveries, prompts, and creative inspiration from across the product.',
-  path: '/discover',
-  keywords: ['discover', 'prompts', 'inspiration', 'explore'],
+    'Learn how Snap AI is building a simple, animated AI image experience for creators and teams.',
+  path: '/about',
+  keywords: ['about us', 'company', 'team', 'mission'],
 });
 
-export default function Discover() {
+export default function AboutPage() {
   return (
     <main>
       <Header />
-      <Hero />
+      <AboutPageContent />
       <Footer />
     </main>
   );

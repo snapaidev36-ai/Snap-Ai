@@ -47,7 +47,7 @@ const Header: React.FC<AiHeader2Props> = () => {
               alt='Logo'
               width={36}
               height={36}
-              className='inline-block align-middle max-w-[100px] min-[375px]:max-w-none'
+              className='inline-block align-middle'
             />
           </Link>
         </div>
@@ -59,6 +59,12 @@ const Header: React.FC<AiHeader2Props> = () => {
             </li>
             <li>
               <Link href='/pricing'>{'Pricing'}</Link>
+            </li>
+            <li>
+              <Link href='/about'>{'About us'}</Link>
+            </li>
+            <li>
+              <Link href='/contact'>{'Contact us'}</Link>
             </li>
           </ul>
         </div>
