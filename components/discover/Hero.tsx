@@ -1,10 +1,15 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '../ui/button';
 import { Download } from '@/lib/icons';
+import { useAuthStore } from '@/lib/store/auth-store';
 
 const Hero: React.FC = () => {
+  const user = useAuthStore(state => state.user);
+  const initialized = useAuthStore(state => state.initialized);
+
   const handleDownload = async (url: string) => {
     const link = document.createElement('a');
     link.href = url;
@@ -37,13 +42,21 @@ const Hero: React.FC = () => {
               <p className='hidden lg:flex mt-1 lg:mt-4 text-[15px] xl:text-2xl font-normal text-gray-500'>
                 Explore an endless, AI-generated images for every need.
               </p>
-
-              {/* <Button className="mt-10 rounded-[60px] font-normal w-[150px] text-[16px] h-12 p-2">
-                Start Discovering
-              </Button> */}
-              <Button className='h-12 bg-[#C5FF67] text-black hover:brightness-95 rounded-full w-40 mx-auto min-[600px]:mx-0 font-bold mt-5 md:mt-[4vw] xl:mt-[3vw]'>
-                Start Discovering
-              </Button>
+              {initialized ? (
+                <Button
+                  asChild
+                  className='bg-primary hover:brightness-95 w-40 mx-auto min-[600px]:mx-0 font-bold mt-5 md:mt-[4vw] xl:mt-[3vw]'>
+                  <Link href={user ? '/dashboard' : '/login'}>
+                    Start Discovering
+                  </Link>
+                </Button>
+              ) : (
+                <Button
+                  disabled
+                  className='bg-primary hover:brightness-95 w-40 mx-auto min-[600px]:mx-0 font-bold mt-5 md:mt-[4vw] xl:mt-[3vw]'>
+                  Loading...
+                </Button>
+              )}
             </div>
           </div>
         </div>
