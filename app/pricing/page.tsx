@@ -56,10 +56,10 @@ export default async function Pricing({ searchParams }: PricingPageProps) {
   }
 
   return (
-    <main className='min-h-dvh bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.08),transparent_35%),linear-gradient(180deg,#f8fafc_0%,#ffffff_55%,#f8fafc_100%)] text-slate-950'>
+    <main className='scroll-smooth min-h-dvh bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.08),transparent_35%),linear-gradient(180deg,#f8fafc_0%,#ffffff_55%,#f8fafc_100%)] text-slate-950'>
       <Header />
       <Hero />
-      <div id='plans' className='pt-8 sm:pt-10 lg:pt-12'>
+      <div id='plans' className='scroll-mt-28 pt-8 sm:pt-10 lg:pt-12'>
         <PaymentPageClient plans={stripePaymentPlans} />
       </div>
       <FAQ />
