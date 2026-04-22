@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
 import { sections } from '@/constants';
 import { Button } from '../ui/button';
@@ -11,10 +12,21 @@ import {
   slideInLeft,
   slideInRight,
 } from '@/lib/motion/variants';
+import { useAuthStore } from '@/lib/store/auth-store';
 
 const LandingPageTools: React.FC = () => {
+  const router = useRouter();
+  const user = useAuthStore(state => state.user);
+  const initialized = useAuthStore(state => state.initialized);
   const prefersReducedMotion = useReducedMotion();
   const motionEnabled = !prefersReducedMotion;
+
+  function handleSectionButtonClick() {
+    if (!initialized) {
+      return;
+    }
+    router.push(user ? '/dashboard' : '/login');
+  }
 
   return (
     <section className='w-full text-center mx-auto lg:px-0 space-y-12 py-8'>
@@ -59,7 +71,7 @@ const LandingPageTools: React.FC = () => {
                       </motion.p>
 
                       <motion.div variants={motionEnabled ? fadeUp : undefined}>
-                        <Button onClick={() => console.log('Navigate to')}>
+                        <Button onClick={handleSectionButtonClick}>
                           {section.buttonText}
                         </Button>
                       </motion.div>

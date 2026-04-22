@@ -55,7 +55,10 @@ export default function DashboardSidebar({
         <div className='flex h-16 items-center px-3'>
           <Link
             href={collapsed ? '/dashboard' : '/'}
-            className='inline-flex items-center w-full'>
+            className={cn(
+              'inline-flex items-center w-full',
+              collapsed && 'justify-center',
+            )}>
             <Image
               src='/logo.png'
               alt='Snap AI'

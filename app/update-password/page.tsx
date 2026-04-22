@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 import {
   Card,
   CardContent,
@@ -7,6 +9,16 @@ import {
 } from '@/components/ui/card';
 import AuthShell from '@/components/auth/AuthShell';
 import UpdatePasswordForm from '@/components/account/UpdatePasswordForm';
+import { buildPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Update password',
+  description:
+    'Set a new password for your Snap AI account using the secure email link.',
+  path: '/update-password',
+  noindex: true,
+  keywords: ['update password', 'reset password', 'account security'],
+});
 
 type UpdatePasswordPageProps = {
   searchParams?: Promise<{ token?: string } | { token?: string }>;

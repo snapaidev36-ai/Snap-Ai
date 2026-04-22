@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import AuthShell from '@/components/auth/AuthShell';
@@ -10,6 +11,15 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { verifyEmailVerificationToken } from '@/lib/auth/email-verification';
+import { buildPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Verify email',
+  description: 'Confirm your email address to activate your Snap AI account.',
+  path: '/verify-email',
+  noindex: true,
+  keywords: ['verify email', 'account verification'],
+});
 
 type VerifyEmailPageProps = {
   searchParams?: Promise<{ token?: string } | { token?: string }>;

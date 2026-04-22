@@ -1,17 +1,14 @@
 'use client';
 
-import React from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { motion, useReducedMotion } from 'framer-motion';
-import { Button } from '../ui/button';
-import { useAuthStore } from '@/lib/store/auth-store';
 import {
   fadeUp,
   pageContainer,
   slideInLeft,
   slideInRight,
 } from '@/lib/motion/variants';
+import { motion, useReducedMotion } from 'framer-motion';
+import Image from 'next/image';
+import React from 'react';
 
 const heroImageSequence = {
   hidden: {},
@@ -21,25 +18,8 @@ const heroImageSequence = {
 };
 
 const Hero: React.FC = () => {
-  const router = useRouter();
-  const user = useAuthStore(state => state.user);
-  const initialized = useAuthStore(state => state.initialized);
   const prefersReducedMotion = useReducedMotion();
   const motionEnabled = !prefersReducedMotion;
-
-  const primaryActionLabel = initialized
-    ? user
-      ? 'Dashboard'
-      : 'Start now'
-    : 'Loading...';
-
-  function handlePrimaryAction() {
-    if (!initialized) {
-      return;
-    }
-
-    router.push(user ? '/dashboard' : '/login');
-  }
 
   return (
     <motion.div
@@ -73,28 +53,12 @@ const Hero: React.FC = () => {
       />
 
       <motion.p
-        className='mt-2 lg:mt-6 xl:mt-6 text-gray-600 dark:text-gray-300 max-w-191 mx-auto lg:text-base lg:leading-6 xl:text-lg leading-relaxed'
+        className='mt-2 lg:mt-6 xl:mt-6 text-gray-600 dark:text-gray-300 max-w-130 md:max-w-150 mx-auto lg:text-base lg:leading-6 xl:text-lg leading-relaxed'
         variants={motionEnabled ? fadeUp : undefined}>
         Harness artistic self-expression to turn selfies into captivating art.
         Stand out, redefine your brand, and let <strong>Snap-ai</strong>{' '}
         generation guide you.
       </motion.p>
-
-      <motion.div
-        className='flex gap-2 justify-center mt-6 lg:mt-8 xl:mt-10 relative z-10'
-        variants={motionEnabled ? fadeUp : undefined}>
-        <Button
-          onClick={handlePrimaryAction}
-          disabled={!initialized}
-          className='h-10 w-40 font-bold'>
-          {primaryActionLabel}
-        </Button>
-        <Button
-          onClick={() => console.log('Navigate to create AI image page')}
-          className='h-10 bg-black w-40 font-bold text-white'>
-          Create AI Image
-        </Button>
-      </motion.div>
 
       <motion.div
         className='grid lg:grid-cols-[250px_auto_250px] xl:grid-cols-[300px_auto_300px] gap-4 mt-6 lg:-mt-10 xl:-mt-20 max-w-350 mx-auto px-4 md:px-8'

@@ -1,227 +1,210 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import React from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { socialLinks } from "@/constants";
-import { fadeUp, sectionContainer } from "@/lib/motion/variants";
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { socialLinks } from '@/constants';
+import { fadeUp, sectionContainer } from '@/lib/motion/variants';
 
 interface FooterProps {
   ImageTools?: { name: string }[];
 }
 
-const Footer: React.FC<FooterProps> = ({ ImageTools = [] }) => {
+type FooterSocialLink = {
+  name: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string; size?: number }>;
+};
+
+const Footer: React.FC<FooterProps> = () => {
   const prefersReducedMotion = useReducedMotion();
   const motionEnabled = !prefersReducedMotion;
-  const toolURL = (toolHref: string) =>
-    toolHref?.toLowerCase().replaceAll("_", "-");
+  const footerCardRef = useRef<HTMLDivElement | null>(null);
+  const [isPointerInside, setIsPointerInside] = useState(false);
+  const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
 
-  const icons: { key: string; svg: React.ReactNode }[] = [
-    {
-      key: "facebook",
-      svg: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M6.32557 12.7824H8.95636V23.6129C8.95636 23.8267 9.12962 24 9.34346 24H13.8041C14.0179 24 14.1911 23.8267 14.1911 23.6129V12.8334H17.2155C17.4121 12.8334 17.5775 12.6859 17.6 12.4905L18.0593 8.50328C18.0719 8.39357 18.0372 8.28372 17.9638 8.20142C17.8903 8.11905 17.7852 8.0719 17.6749 8.0719H14.1913V5.57249C14.1913 4.81905 14.597 4.43698 15.3972 4.43698H17.6749C17.8887 4.43698 18.062 4.26364 18.062 4.04988V0.389961C18.062 0.176129 17.8887 0.00286452 17.6749 0.00286452H14.5359C13.8475 0 11.9543 0.106916 10.4589 1.48266C8.80199 3.0072 9.03231 4.83259 9.08735 5.14908V8.07182H6.32557C6.11174 8.07182 5.93848 8.24508 5.93848 8.45892V12.3952C5.93848 12.6091 6.11174 12.7824 6.32557 12.7824Z"
-            fill="#1A1A1A"
-          />
-        </svg>
-      ),
-    },
-    {
-      key: "instagram",
-      svg: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M8.00064 12C8.00064 9.79094 9.79094 7.99968 12 7.99968C14.2091 7.99968 16.0003 9.79094 16.0003 12C16.0003 14.2091 14.2091 16.0003 12 16.0003C9.79094 16.0003 8.00064 14.2091 8.00064 12Z"
-            fill="#1A1A1A"
-          />
-        </svg>
-      ),
-    },
-    {
-      key: "tiktok",
-      svg: (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M19.3214 5.56219C19.1695 5.4837 19.0217 5.39765 18.8784 5.30437C18.4618 5.02896 18.0799 4.70445 17.7408 4.33781C16.8923 3.36703 16.5754 2.38219 16.4587 1.69266H12.5479V15.6928C12.4927 16.9386 12.3208 17.4566 12.0329 17.9107C11.7451 18.3648 11.35 18.7413 10.8825 19.0069C10.3952 19.2841 9.84414 19.4295 9.28357 19.4287C7.4831 19.4287 6.02388 17.9606 6.02388 16.1475C6.02388 14.3344 7.4831 12.8662 9.28357 12.8662C9.62439 12.8659 9.96311 12.9196 10.2872 13.0252L10.2918 9.09047C6.4047 9.59858 3.53457 11.9778 3.10591 12.7491C2.94279 13.0303 2.32732 14.1605 2.25279 15.9947C2.20591 17.0358 2.51857 18.1144 2.66763 18.5602C4.19409 21.0887 7.27076 23.3334 9.34497 23.25C9.70404 23.2355 10.9068 23.25 12.2728 22.6027C13.7878 21.885 14.6503 20.8158 14.6503 20.8158C16.2956 17.7436 16.4123 16.6411 16.4123 16.2005V8.27297C17.0836 8.71406 17.9831 9.29062 19.3865 9.66609C20.3934 9.93328 21.75 9.98953 21.75 9.98953V6.15328C21.2747 6.20484 20.3095 6.05484 19.3214 5.56219Z"
-            fill="#1A1A1A"
-          />
-        </svg>
-      ),
-    },
-  ];
+  const socialLinkItems: FooterSocialLink[] = Array.isArray(socialLinks)
+    ? socialLinks
+    : Object.values(socialLinks ?? {});
 
   const paymentIcons: { key: string; icon: React.ReactNode }[] = [
     {
-      key: "apple",
-      icon: "/icons/ApplePay.svg",
-    },
-    {
-      key: "mastercard",
-      icon: "/icons/MasterCard.svg",
+      key: 'mastercard',
+      icon: '/icons/MasterCard.svg',
     },
   ];
 
+  function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    const bounds = footerCardRef.current?.getBoundingClientRect();
+
+    if (!bounds) {
+      return;
+    }
+
+    setPointerPosition({
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top,
+    });
+  }
+
   return (
     <motion.footer
-      className="w-full theme:grey02BgClass"
-      initial={motionEnabled ? "hidden" : false}
-      whileInView={motionEnabled ? "show" : undefined}
+      className='relative w-full overflow-hidden border-t border-border/60 bg-[radial-gradient(circle_at_top,rgba(197,255,103,0.16),transparent_28%),linear-gradient(180deg,rgba(255,255,255,1),rgba(247,248,250,1))] dark:bg-[radial-gradient(circle_at_top,rgba(197,255,103,0.12),transparent_24%),linear-gradient(180deg,rgba(10,10,12,0.98),rgba(15,15,18,1))]'
+      initial={motionEnabled ? 'hidden' : false}
+      whileInView={motionEnabled ? 'show' : undefined}
       viewport={motionEnabled ? { once: true, amount: 0.2 } : undefined}
-      variants={motionEnabled ? sectionContainer : undefined}
-    >
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-10">
+      variants={motionEnabled ? sectionContainer : undefined}>
+      <div className='absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent' />
+      <div className='absolute -left-24 top-10 h-48 w-48 rounded-full bg-primary/10 blur-3xl' />
+      <div className='absolute -right-16 bottom-4 h-56 w-56 rounded-full bg-emerald-400/10 blur-3xl' />
+
+      <div className='relative mx-auto max-w-7xl px-4 py-12 md:px-8 md:py-16'>
         <motion.div
-          className="flex flex-col md:flex-row justify-between gap-3 w-full border-b border-b-[#D8D8D8] pb-12"
-          variants={motionEnabled ? sectionContainer : undefined}
-        >
-          <motion.div
-            className="flex gap-16 xl:gap-32"
-            variants={motionEnabled ? sectionContainer : undefined}
-          >
-            {ImageTools.length ? (
-              <motion.div variants={motionEnabled ? fadeUp : undefined}>
-                <h4 className="font-bold text-base lg:text-xl"></h4>
-                <motion.div
-                  className="flex flex-col gap-2 mt-4"
-                  variants={motionEnabled ? sectionContainer : undefined}
-                >
-                  {ImageTools.map((tool, index) => (
-                    <motion.div
-                      key={index}
-                      variants={motionEnabled ? fadeUp : undefined}
-                    >
-                      <Link
-                        href={`/dashboard/${toolURL(tool.name)}`}
-                        className="text-base theme:lightText"
-                      >
-                        {tool.name}
-                      </Link>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </motion.div>
-            ) : null}
+          ref={footerCardRef}
+          className='overflow-hidden rounded-4xl border border-border/70 bg-background/80 shadow-[0_28px_90px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5'
+          onPointerEnter={event => {
+            setIsPointerInside(true);
+            handlePointerMove(event);
+          }}
+          onPointerMove={handlePointerMove}
+          onPointerLeave={() => setIsPointerInside(false)}
+          variants={motionEnabled ? sectionContainer : undefined}>
+          <div
+            aria-hidden='true'
+            className='pointer-events-none absolute inset-0 transition-opacity duration-300 ease-out'
+            style={{
+              opacity: isPointerInside ? 1 : 0,
+              backgroundImage: `radial-gradient(circle 280px at ${pointerPosition.x}px ${pointerPosition.y}px, rgba(197, 255, 103, 0.24), transparent 65%), radial-gradient(circle 180px at ${pointerPosition.x}px ${pointerPosition.y}px, rgba(255, 255, 255, 0.32), transparent 68%)`,
+            }}
+          />
 
-            <motion.div variants={motionEnabled ? fadeUp : undefined}>
-              <h4 className="text-lg font-bold mb-4">{"Others"}</h4>
-              <motion.ul
-                variants={motionEnabled ? sectionContainer : undefined}
-              >
-                <motion.li variants={motionEnabled ? fadeUp : undefined}>
-                  <Link
-                    href="/terms-of-service"
-                    className="text-base theme:lightText mb-2 block"
-                  >
-                    {"Terms of Service"}
-                  </Link>
-                </motion.li>
-                <motion.li variants={motionEnabled ? fadeUp : undefined}>
-                  <Link
-                    href="/privacy-policy"
-                    className="text-base theme:lightText mb-2 block"
-                  >
-                    {"Privacy Policy"}
-                  </Link>
-                </motion.li>
-              </motion.ul>
-            </motion.div>
-          </motion.div>
-
-          <motion.div variants={motionEnabled ? fadeUp : undefined}>
-            <h4 className="font-bold text-base lg:text-xl">{"Payment"}</h4>
+          <div className='grid gap-10 px-6 py-8 sm:px-8 lg:grid-cols-2 lg:px-10 lg:py-10'>
             <motion.div
-              className="relative w-full max-w-74 mt-5 flex gap-4 flex-row"
-              variants={motionEnabled ? sectionContainer : undefined}
-            >
-              {paymentIcons.map(({ key, icon }) => (
-                <motion.span
-                  key={key}
-                  variants={motionEnabled ? fadeUp : undefined}
-                >
-                  <Image
-                    src={icon as string}
-                    className="w-full"
-                    width={296}
-                    height={40}
-                    alt="payment methods"
-                  />
-                </motion.span>
-              ))}
+              className='relative z-10 space-y-5'
+              variants={motionEnabled ? fadeUp : undefined}>
+              <div className='inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary'>
+                <span className='h-1.5 w-1.5 rounded-full bg-primary' />
+                AI image studio
+              </div>
+
+              <div className='space-y-3'>
+                <div className='flex items-center gap-3'>
+                  <Link href='/' className='shrink-0'>
+                    <Image
+                      src='/logo.png'
+                      width={48}
+                      height={48}
+                      alt='Snap AI logo'
+                      className='h-12 w-12 rounded-2xl shadow-sm'
+                    />
+                  </Link>
+                  <div>
+                    <p className='text-lg font-semibold tracking-tight'>
+                      Snap AI
+                    </p>
+                    <p className='text-muted-foreground text-sm'>
+                      Modern image generation for creators, teams, and brands.
+                    </p>
+                  </div>
+                </div>
+
+                <p className='text-muted-foreground max-w-md text-sm leading-6 sm:text-base'>
+                  Create polished visuals, explore new styles, and keep your
+                  workflow moving with a fast, carefully animated interface.
+                </p>
+              </div>
             </motion.div>
 
-            {Object.values(socialLinks || {}).some(Boolean) && (
+            <motion.div
+              className='relative z-10 space-y-5'
+              variants={motionEnabled ? fadeUp : undefined}>
+              <h4 className='text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground'>
+                Payments & Social
+              </h4>
+
+              <div className='space-y-4 rounded-2xl border border-border/70 bg-muted/30 p-4'>
+                <div className='space-y-3'>
+                  <p className='text-sm font-semibold'>Secure payments</p>
+                  <div className='flex flex-wrap gap-3'>
+                    {paymentIcons.map(({ key, icon }) => (
+                      <div
+                        key={key}
+                        className='flex h-10 items-center rounded-xl border border-border/70 bg-background px-3 shadow-sm'>
+                        <Image
+                          src={icon as string}
+                          width={96}
+                          height={28}
+                          alt='payment methods'
+                          className='h-6 w-auto'
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {socialLinkItems.length ? (
+                  <div className='space-y-3'>
+                    <p className='text-sm font-semibold'>Follow us</p>
+                    <div className='flex flex-wrap gap-2'>
+                      {socialLinkItems.map(link => {
+                        const SocialIcon = link.icon;
+
+                        return (
+                          <motion.div
+                            key={link.name}
+                            whileHover={
+                              motionEnabled ? { y: -2, scale: 1.02 } : undefined
+                            }
+                            whileTap={
+                              motionEnabled ? { scale: 0.98 } : undefined
+                            }>
+                            <Link
+                              href={link.url}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              aria-label={link.name}
+                              className='group inline-flex h-11 items-center gap-2 rounded-full border border-border/70 bg-background px-3 pr-4 text-sm font-medium shadow-sm transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary'>
+                              <SocialIcon size={16} className='shrink-0' />
+                              <span>{link.name}</span>
+                            </Link>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </motion.div>
+          </div>
+
+          <motion.div
+            className='relative z-10 border-t border-border/70 px-6 py-5 sm:px-8 lg:px-10'
+            variants={motionEnabled ? sectionContainer : undefined}>
+            <div className='flex flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between'>
+              <motion.small
+                variants={motionEnabled ? fadeUp : undefined}
+                className='flex flex-wrap items-center gap-x-2 gap-y-1'>
+                <span className='font-medium text-foreground'>Snap AI</span>
+                <span>•</span>
+                <span>© {new Date().getFullYear()} All rights reserved.</span>
+              </motion.small>
+
               <motion.div
-                className="flex gap-2 mt-5"
-                variants={motionEnabled ? sectionContainer : undefined}
-              >
-                {icons.map(({ key, svg }) => {
-                  const link = socialLinks?.[key as keyof typeof socialLinks];
-                  return typeof link === "string" && link ? (
-                    <motion.div
-                      key={key}
-                      variants={motionEnabled ? fadeUp : undefined}
-                    >
-                      <Link
-                        href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="theme:grey03BgClass rounded-full w-10 h-10 lg:w-12 lg:h-12 flex justify-center items-center"
-                      >
-                        {svg}
-                      </Link>
-                    </motion.div>
-                  ) : null;
-                })}
+                className='flex flex-wrap items-center gap-3'
+                variants={motionEnabled ? sectionContainer : undefined}>
+                <Link
+                  href='/terms-of-service'
+                  className='transition-colors hover:text-primary'>
+                  Terms
+                </Link>
+                <Link
+                  href='/privacy-policy'
+                  className='transition-colors hover:text-primary'>
+                  Privacy
+                </Link>
               </motion.div>
-            )}
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          className="flex flex-col gap-3 justify-between items-center"
-          variants={motionEnabled ? sectionContainer : undefined}
-        >
-          <motion.div
-            className="text-center flex flex-col items-center gap lg:gap-3 py-6"
-            variants={motionEnabled ? sectionContainer : undefined}
-          >
-            <motion.div variants={motionEnabled ? fadeUp : undefined}>
-              <Link href="/">
-                <Image src="/logo.png" width={36} height={36} alt="logo" />
-              </Link>
-            </motion.div>
-            <motion.small
-              variants={motionEnabled ? fadeUp : undefined}
-              className="capitalize"
-            >
-              {"Ai-Devs"}
-            </motion.small>
-          </motion.div>
-          <motion.div
-            className="flex flex-col gap-3 justify-between items-center"
-            variants={motionEnabled ? sectionContainer : undefined}
-          >
-            <motion.small
-              variants={motionEnabled ? fadeUp : undefined}
-              className="flex justify-center flex-wrap gap-0.5"
-            >
-              ©{"Operated By"}
-              <span className="capitalize">{"Footer Text"}</span>
-              <span className="ml-1">
-                {"All rights reserved"} {new Date().getFullYear()}
-              </span>
-            </motion.small>
-            <motion.ul
-              className="flex flex-wrap gap-2 text-xs leading-none justify-center mt-1 lg:mt-0"
-              variants={motionEnabled ? sectionContainer : undefined}
-            >
-              <motion.li variants={motionEnabled ? fadeUp : undefined}>
-                <Link href="/terms-of-service">{"Terms of Service"}</Link>
-              </motion.li>
-            </motion.ul>
+            </div>
           </motion.div>
         </motion.div>
       </div>

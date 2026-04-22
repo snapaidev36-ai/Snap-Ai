@@ -1,17 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 
-import { apiClient } from '@/lib/client/api';
-import { formatBillingRangeLabel } from '@/lib/billing';
-import type {
-  BillingDateRange,
-  BillingPageData,
-  BillingSummary,
-  BillingTransactionPage,
-} from '@/lib/types/billing';
-import { toast } from '@/components/ui/sonner';
+import type { BillingPageData } from '@/lib/types/billing';
 import BillingDateRangeFilter from '@/components/account/billing/BillingDateRangeFilter';
 import BillingOverviewCards from '@/components/account/billing/BillingOverviewCards';
 import BillingTransactionsTable from '@/components/account/billing/BillingTransactionsTable';
@@ -23,98 +14,29 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ChevronRight } from '@/lib/icons';
+import { useBillingPageData } from '@/lib/hooks/useBillingPageData';
 
 type BillingPageClientProps = {
   initialData: BillingPageData;
 };
 
-type BillingSummaryResponse = {
-  range: BillingDateRange;
-  label: string;
-  summary: BillingSummary;
-};
-
-type BillingTransactionsResponse = {
-  range: BillingDateRange;
-  label: string;
-  items: BillingTransactionPage['items'];
-  nextCursor: string | null;
-};
-
 export default function BillingPageClient({
   initialData,
 }: BillingPageClientProps) {
-  const [draftRange, setDraftRange] = useState(initialData.range);
-  const [activeRange, setActiveRange] = useState(initialData.range);
-  const [summary, setSummary] = useState(initialData.summary);
-  const [transactions, setTransactions] = useState(
-    initialData.transactions.items,
-  );
-  const [nextCursor, setNextCursor] = useState(
-    initialData.transactions.nextCursor,
-  );
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  async function handleReset() {
-    setDraftRange(initialData.range);
-    await loadRange(initialData.range);
-  }
-
-  async function loadRange(range: BillingDateRange) {
-    setIsRefreshing(true);
-
-    try {
-      const [summaryResponse, transactionsResponse] = await Promise.all([
-        apiClient<BillingSummaryResponse>(
-          `/api/account/billing/summary?from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`,
-          { skipAuthRefresh: false },
-        ),
-        apiClient<BillingTransactionsResponse>(
-          `/api/account/billing/transactions?from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}&limit=10`,
-          { skipAuthRefresh: false },
-        ),
-      ]);
-
-      setActiveRange(summaryResponse.range);
-      setDraftRange(summaryResponse.range);
-      setSummary(summaryResponse.summary);
-      setTransactions(transactionsResponse.items);
-      setNextCursor(transactionsResponse.nextCursor);
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'Unable to load billing data.',
-      );
-    } finally {
-      setIsRefreshing(false);
-    }
-  }
-
-  async function handleLoadMore() {
-    if (!nextCursor) {
-      return;
-    }
-
-    setIsLoadingMore(true);
-
-    try {
-      const response = await apiClient<BillingTransactionsResponse>(
-        `/api/account/billing/transactions?from=${encodeURIComponent(activeRange.from)}&to=${encodeURIComponent(activeRange.to)}&cursor=${encodeURIComponent(nextCursor)}&limit=10`,
-        { skipAuthRefresh: false },
-      );
-
-      setTransactions(current => [...current, ...response.items]);
-      setNextCursor(response.nextCursor);
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : 'Unable to load more transactions.',
-      );
-    } finally {
-      setIsLoadingMore(false);
-    }
-  }
+  const {
+    draftRange,
+    setDraftRange,
+    activeRange,
+    summary,
+    transactions,
+    nextCursor,
+    isRefreshing,
+    isLoadingMore,
+    loadRange,
+    handleReset,
+    handleLoadMore,
+    activeRangeLabel,
+  } = useBillingPageData({ initialData });
 
   return (
     <div className='space-y-6'>
@@ -127,8 +49,7 @@ export default function BillingPageClient({
             <CardDescription className='max-w-2xl text-base'>
               Monitor credits remaining, credits purchased, and credits used
               over the range you choose. The table below shows completed and
-              pending credit purchases for{' '}
-              {formatBillingRangeLabel(activeRange)}.
+              pending credit purchases for {activeRangeLabel}.
             </CardDescription>
           </div>
 

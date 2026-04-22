@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -10,34 +8,23 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { apiClient } from '@/lib/client/api';
 import { toast } from '@/components/ui/sonner';
+import { useRequestPasswordChange } from '@/lib/hooks/useRequestPasswordChange';
 
 type PasswordChangeCardProps = {
   email: string;
   firstName: string;
 };
 
-type PasswordChangeResponse = {
-  message?: string;
-};
-
 export default function PasswordChangeCard({
   email,
   firstName,
 }: PasswordChangeCardProps) {
-  const [loading, setLoading] = useState(false);
+  const { requestPasswordChange, isSending } = useRequestPasswordChange();
 
   const handleRequestPasswordChange = async () => {
-    setLoading(true);
-
     try {
-      const response = await apiClient<PasswordChangeResponse>(
-        '/api/account/request-password-change',
-        {
-          method: 'POST',
-        },
-      );
+      const response = await requestPasswordChange();
 
       toast.success(
         response.message ??
@@ -49,8 +36,6 @@ export default function PasswordChangeCard({
           ? error.message
           : 'Unable to send the password update email.',
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -73,8 +58,8 @@ export default function PasswordChangeCard({
           type='button'
           className='w-full'
           onClick={handleRequestPasswordChange}
-          disabled={loading}>
-          {loading ? 'Sending email...' : 'Send password update email'}
+          disabled={isSending}>
+          {isSending ? 'Sending email...' : 'Send password update email'}
         </Button>
       </CardContent>
     </Card>

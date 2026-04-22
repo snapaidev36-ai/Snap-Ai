@@ -1,16 +1,13 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
 
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
 import GreetingHero from '@/components/dashboard/GreetingHero';
 import PromptComposer from '@/components/dashboard/PromptComposer';
-import { apiClient } from '@/lib/client/api';
-import { useAuthStore } from '@/lib/store/auth-store';
+import { useLogoutAction } from '@/lib/hooks/useLogoutAction';
 import { pageContainer } from '@/lib/motion/variants';
 
 type DashboardPageClientProps = {
@@ -26,31 +23,8 @@ export default function DashboardPageClient({
   children,
   contentClassName,
 }: DashboardPageClientProps) {
-  const router = useRouter();
-  const clearUser = useAuthStore(state => state.clearUser);
   const prefersReducedMotion = useReducedMotion();
-
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  async function handleLogout() {
-    setIsLoggingOut(true);
-    setErrorMessage(null);
-
-    try {
-      await apiClient<{ message: string }>('/api/auth/logout', {
-        method: 'POST',
-        skipAuthRefresh: true,
-      });
-
-      clearUser();
-      router.replace('/login');
-    } catch {
-      setErrorMessage('Unable to logout right now. Please try again.');
-    } finally {
-      setIsLoggingOut(false);
-    }
-  }
+  const { handleLogout, isLoggingOut, errorMessage } = useLogoutAction();
 
   return (
     <main className='h-dvh overflow-hidden bg-background'>

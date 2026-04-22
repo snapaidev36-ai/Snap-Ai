@@ -59,6 +59,7 @@ const envSchema = z.object({
     .string()
     .min(1, 'RESEND_FROM is required')
     .default('Snap AI <onboarding@resend.dev>'),
+  ADMIN_EMAIL: z.string().email().optional(),
   R2_S3_ENDPOINT: z
     .string()
     .url('R2_S3_ENDPOINT must be a valid URL')

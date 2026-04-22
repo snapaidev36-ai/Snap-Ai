@@ -35,7 +35,7 @@
     "framer-motion": "^12.38.0",
     "image-size": "^2.0.2",
     "jose": "^6.2.2",
-    "lucide-animated": "^1.0.0",
+    "lucide-react": "^1.8.0",
     "mime-types": "^3.0.2",
     "next": "16.0.10",
     "radix-ui": "^1.4.3",

@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import Icons from '../icons/icons';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store/auth-store';
@@ -33,24 +32,15 @@ const Header: React.FC<AiHeader2Props> = () => {
   return (
     <div className='fixed z-50 lg:z-20 lg:relative bg-[#FAFAFA] lg:bg-transparent top-0 w-full flex items-center justify-between px-5 lg:px-8 py-4 lg:py-8'>
       <div className='flex items-center gap-6'>
-        <div className='flex items-center gap-3 col-span-3'>
-          <Button
-            onClick={() => {
-              console.log('Toggle menu');
-            }}
-            className='lg:hidden h-10 w-10 flex items-center justify-center rounded-full bg-[#F1F1F1]'>
-            <Image src={Icons.Menu} alt='Menu' width={24} height={24} />
-          </Button>
-          <Link href='/'>
-            <Image
-              src='/logo.png'
-              alt='Logo'
-              width={36}
-              height={36}
-              className='inline-block align-middle max-w-[100px] min-[375px]:max-w-none'
-            />
-          </Link>
-        </div>
+        <Link href='/'>
+          <Image
+            src='/logo.png'
+            alt='Logo'
+            width={36}
+            height={36}
+            className='inline-block align-middle'
+          />
+        </Link>
 
         <div className='col-span-6 hidden lg:block'>
           <ul className='flex gap-6 justify-center font-semibold'>
@@ -59,6 +49,12 @@ const Header: React.FC<AiHeader2Props> = () => {
             </li>
             <li>
               <Link href='/pricing'>{'Pricing'}</Link>
+            </li>
+            <li>
+              <Link href='/about'>{'About us'}</Link>
+            </li>
+            <li>
+              <Link href='/contact'>{'Contact us'}</Link>
             </li>
           </ul>
         </div>

@@ -3,16 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { signInWithGoogleUsingFirebase } from '@/lib/client/firebase';
-import { getErrorMessage, getFirstMessage } from '@/lib/helpers';
 import { Eye, EyeOff, Lock, Mail } from '@/lib/icons';
-import { useAuthStore } from '@/lib/store/auth-store';
-import type { AuthUser } from '@/lib/types/auth-user';
 import { loginSchema, type LoginInput } from '@/lib/validation/auth';
+import { useLoginFormActions } from '@/lib/hooks/useLoginFormActions';
 import {
   Form,
   FormField,
@@ -23,26 +19,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/sonner';
-
-type BackendFieldErrors = Partial<Record<'email' | 'password', string[]>>;
-
-type LoginErrorResponse = {
-  error?: string;
-  message?: string;
-  fields?: BackendFieldErrors;
-};
-
-type LoginResponseBody = LoginErrorResponse & {
-  user?: AuthUser;
-};
 
 export default function LoginForm() {
-  const router = useRouter();
-  const setUser = useAuthStore(state => state.setUser);
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -51,72 +30,8 @@ export default function LoginForm() {
   });
 
   const { clearErrors, setError } = form;
-  function applyBackendValidationErrors(fields: BackendFieldErrors) {
-    const emailError = getFirstMessage(fields.email);
-    if (emailError) {
-      setError('email', { type: 'server', message: emailError });
-    }
-
-    const passwordError = getFirstMessage(fields.password);
-    if (passwordError) {
-      setError('password', { type: 'server', message: passwordError });
-    }
-  }
-
-  const onSubmit = async (values: LoginInput) => {
-    clearErrors();
-    setLoading(true);
-
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      });
-
-      const body = (await response
-        .json()
-        .catch(() => null)) as LoginResponseBody | null;
-
-      if (!response.ok) {
-        if (response.status === 400 && body?.fields) {
-          applyBackendValidationErrors(body.fields);
-          return;
-        }
-
-        toast.error(
-          body?.error ??
-            body?.message ??
-            'Unable to sign in. Please try again.',
-        );
-        return;
-      }
-
-      if (body?.user) {
-        setUser(body.user);
-      }
-
-      router.replace('/dashboard');
-    } catch {
-      toast.error('An unexpected error occurred.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setGoogleLoading(true);
-
-    try {
-      const response = await signInWithGoogleUsingFirebase();
-      setUser(response.user);
-      router.replace(response.redirectTo || '/dashboard');
-    } catch (error) {
-      toast.error(getErrorMessage(error));
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
+  const { handleLoginSubmit, handleGoogleSignIn, loading, googleLoading } =
+    useLoginFormActions({ clearErrors, setError });
 
   return (
     <div className='w-full'>
@@ -130,7 +45,9 @@ export default function LoginForm() {
       </p>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+        <form
+          onSubmit={form.handleSubmit(handleLoginSubmit)}
+          className='space-y-4'>
           <FormField
             control={form.control}
             name='email'
