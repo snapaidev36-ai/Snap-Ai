@@ -47,9 +47,11 @@ jobs:
         needs: lint
         runs-on: ubuntu-latest
         env:
+            APP_URL: http://localhost:8001
             DATABASE_URL: mongodb://localhost:27017/snap-ai
             JWT_ACCESS_SECRET: fc67e2dba27946302b423c45d4fa0d4814b00e6b9471a8193b226a3a010b7033ce9d57a471be32a2e06705293f25e898019912449d0fe1ac0e665c53cc14421c
             JWT_REFRESH_SECRET: fc67e2dba27946302b423c45d4fa0d4814b00e6b9471a8193b226a3a010b7033ce9d57a471be32a2e06705293f25e898019912449d0fe1ac0e665c53cc14421c
+            ADMIN_EMAIL: ci-admin@example.com
             FIREBASE_PROJECT_ID: ci-project
             FIREBASE_CLIENT_EMAIL: ci@example.com
             FIREBASE_PRIVATE_KEY_API_KEY_HASH: ci.private-key-hash
@@ -61,6 +63,7 @@ jobs:
             NEXT_PUBLIC_FIREBASE_APP_ID: 1:1234567890:web:abcdef123456
             NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: G-TEST123
             REPLICATE_API_KEY: ci-replicate-api-key
+            REPLICATE_WEBHOOK_SIGNING_SECRET: ci-replicate-webhook-signing-secret
             R2_S3_ENDPOINT: https://ci-r2-account-id.r2.cloudflarestorage.com
             R2_ACCOUNT_ID: ci-r2-account-id
             R2_ACCOUNT_TOKEN: ci-r2-account-token
@@ -69,6 +72,14 @@ jobs:
             R2_BUCKET_NAME: snap-ai
             RESEND_API_KEY: ci-resend-api-key
             RESEND_FROM: "Snap AI <ci@example.com>"
+            STRIPE_SECRET_KEY: ci-stripe-secret-key
+            STRIPE_PUBLISHABLE_KEY: ci-stripe-publishable-key
+            STRIPE_WEBHOOK_SIGNING_SECRET: ci-stripe-webhook-signing-secret
+            STRIPE_SUCCESS_URL: http://localhost:8001/pricing?status=success
+            STRIPE_CANCEL_URL: http://localhost:8001/pricing?status=cancelled
+            STRIPE_BASIC_PRICE_ID: ci-stripe-basic-price-id
+            STRIPE_STANDARD_PRICE_ID: ci-stripe-standard-price-id
+            STRIPE_PREMIUM_PRICE_ID: ci-stripe-premium-price-id
 
         steps:
             - name: Checkout
