@@ -41,7 +41,7 @@ export default function ImagePromptPreviewModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='p-0'>
-        <div className='grid max-h-[90vh] lg:grid-cols-[1.1fr_0.9fr]'>
+        <div className='grid max-h-[90dvh] lg:grid-cols-[1.1fr_0.9fr]'>
           <div className='relative min-h-110 overflow-hidden bg-slate-950 lg:min-h-full'>
             <Image
               src={imageUrl ? imageUrl : '/placeholder-image.png'}

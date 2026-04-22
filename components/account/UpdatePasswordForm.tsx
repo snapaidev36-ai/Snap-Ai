@@ -23,9 +23,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/sonner';
-import { apiClient, ApiClientError } from '@/lib/client/api';
+import { ApiClientError } from '@/lib/client/api';
 import { Eye, EyeOff, Lock } from '@/lib/icons';
 import { getFirstMessage } from '@/lib/helpers';
+import { useUpdatePasswordMutation } from '@/lib/hooks/useUpdatePasswordMutation';
 import {
   passwordUpdateFormSchema,
   type PasswordUpdateFormInput,
@@ -44,7 +45,7 @@ type UpdatePasswordResponse = {
 export default function UpdatePasswordForm({ token }: UpdatePasswordFormProps) {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { updatePassword, isUpdating } = useUpdatePasswordMutation(token);
 
   const form = useForm<PasswordUpdateFormInput>({
     resolver: zodResolver(passwordUpdateFormSchema),
@@ -70,20 +71,9 @@ export default function UpdatePasswordForm({ token }: UpdatePasswordFormProps) {
 
   const onSubmit = async (values: PasswordUpdateFormInput) => {
     clearErrors();
-    setLoading(true);
 
     try {
-      const response = await apiClient<UpdatePasswordResponse>(
-        '/api/auth/update-password',
-        {
-          method: 'POST',
-          body: {
-            token,
-            newPassword: values.newPassword,
-          },
-          skipAuthRefresh: true,
-        },
-      );
+      const response = await updatePassword(values);
 
       toast.success(response.message ?? 'Your password has been updated.');
       router.replace('/login?password-updated=1');
@@ -104,8 +94,6 @@ export default function UpdatePasswordForm({ token }: UpdatePasswordFormProps) {
           ? error.message
           : 'Unable to update your password.',
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -174,8 +162,8 @@ export default function UpdatePasswordForm({ token }: UpdatePasswordFormProps) {
               )}
             />
 
-            <Button type='submit' className='w-full' disabled={loading}>
-              {loading ? 'Updating password...' : 'Update password'}
+            <Button type='submit' className='w-full' disabled={isUpdating}>
+              {isUpdating ? 'Updating password...' : 'Update password'}
             </Button>
           </form>
         </Form>

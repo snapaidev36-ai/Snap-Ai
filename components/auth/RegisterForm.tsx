@@ -3,15 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { signInWithGoogleUsingFirebase } from '@/lib/client/firebase';
-import { cleanString, getErrorMessage, getFirstMessage } from '@/lib/helpers';
 import { Eye, EyeOff, Lock, Mail } from '@/lib/icons';
-import { useAuthStore } from '@/lib/store/auth-store';
 import {
   Form,
   FormField,
@@ -22,34 +18,24 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/sonner';
+import {
+  type RegisterFormValues,
+  useRegisterFormActions,
+} from '@/lib/hooks/useRegisterFormActions';
 
 const clientSchema = z.object({
   name: z
     .string()
-    .transform(cleanString)
+    .transform(value => value.trim().replace(/\s+/g, ' '))
     .pipe(z.string().min(1, 'Full name is required')),
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
-type FormValues = z.infer<typeof clientSchema>;
-type BackendFieldErrors = Partial<
-  Record<'firstName' | 'lastName' | 'email' | 'password', string[]>
->;
-
-type RegisterErrorResponse = {
-  error?: string;
-  message?: string;
-  fields?: BackendFieldErrors;
-};
+type FormValues = RegisterFormValues;
 
 export default function RegisterForm() {
-  const router = useRouter();
-  const setUser = useAuthStore(state => state.setUser);
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(clientSchema),
@@ -58,86 +44,8 @@ export default function RegisterForm() {
   });
 
   const { clearErrors, setError } = form;
-
-  function applyBackendValidationErrors(fields: BackendFieldErrors) {
-    const nameError =
-      getFirstMessage(fields.firstName) ?? getFirstMessage(fields.lastName);
-
-    if (nameError) {
-      setError('name', { type: 'server', message: nameError });
-    }
-
-    const emailError = getFirstMessage(fields.email);
-    if (emailError) {
-      setError('email', { type: 'server', message: emailError });
-    }
-
-    const passwordError = getFirstMessage(fields.password);
-    if (passwordError) {
-      setError('password', { type: 'server', message: passwordError });
-    }
-  }
-
-  const onSubmit = async (values: FormValues) => {
-    clearErrors();
-    setLoading(true);
-
-    try {
-      const parts = cleanString(values.name).split(/\s+/).filter(Boolean);
-      const firstName = parts.shift() || '';
-      const lastName = parts.length ? parts.join(' ') : firstName;
-      const payload = {
-        firstName,
-        lastName,
-        email: values.email,
-        password: values.password,
-      };
-
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const body = (await res
-        .json()
-        .catch(() => null)) as RegisterErrorResponse | null;
-
-      if (!res.ok) {
-        if (res.status === 400 && body?.fields) {
-          applyBackendValidationErrors(body.fields);
-          return;
-        }
-
-        toast.error(
-          body?.error ??
-            body?.message ??
-            'Registration failed. Please try again.',
-        );
-        return;
-      }
-
-      router.push('/login?registered=1');
-    } catch {
-      toast.error('An unexpected error occurred.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setGoogleLoading(true);
-
-    try {
-      const response = await signInWithGoogleUsingFirebase();
-      setUser(response.user);
-      router.replace(response.redirectTo || '/dashboard');
-    } catch (error) {
-      toast.error(getErrorMessage(error));
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
+  const { handleRegisterSubmit, handleGoogleSignIn, loading, googleLoading } =
+    useRegisterFormActions({ clearErrors, setError });
 
   return (
     <div className='w-full'>
@@ -153,7 +61,9 @@ export default function RegisterForm() {
       </p>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+        <form
+          onSubmit={form.handleSubmit(handleRegisterSubmit)}
+          className='space-y-4'>
           <FormField
             control={form.control}
             name='name'

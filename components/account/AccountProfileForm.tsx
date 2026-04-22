@@ -25,7 +25,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Upload } from '@/lib/icons';
 import { toast } from '@/components/ui/sonner';
-import { cleanString, getFirstMessage, getInitials } from '@/lib/helpers';
+import { getFirstMessage, getInitials } from '@/lib/helpers';
+import { useAccountProfileMutation } from '@/lib/hooks/useAccountProfileMutation';
 import { useAuthStore } from '@/lib/store/auth-store';
 import type { AuthUser } from '@/lib/types/auth-user';
 import {
@@ -36,13 +37,6 @@ import {
 type AccountProfileFormProps = {
   user: AuthUser;
   onUserUpdated: (user: AuthUser) => void;
-};
-
-type AccountProfileResponse = {
-  message?: string;
-  error?: string;
-  fields?: Partial<Record<'firstName' | 'lastName' | 'profileImage', string[]>>;
-  user?: AuthUser;
 };
 
 const MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -58,12 +52,13 @@ export default function AccountProfileForm({
 }: AccountProfileFormProps) {
   const setStoreUser = useAuthStore(state => state.setUser);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [fileInputKey, setFileInputKey] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [profileImageError, setProfileImageError] = useState<string | null>(
     null,
   );
+  const { updateProfile, isUpdating } = useAccountProfileMutation();
 
   const form = useForm<UpdateProfileInput>({
     resolver: zodResolver(updateProfileSchema),
@@ -92,7 +87,9 @@ export default function AccountProfileForm({
   }, [previewUrl]);
 
   function applyBackendValidationErrors(
-    fields?: AccountProfileResponse['fields'],
+    fields?: Partial<
+      Record<'firstName' | 'lastName' | 'profileImage', string[]>
+    >,
   ) {
     const firstNameError = getFirstMessage(fields?.firstName);
     if (firstNameError) {
@@ -139,29 +136,19 @@ export default function AccountProfileForm({
     setPreviewUrl(URL.createObjectURL(file));
   }
 
+  function resetSelectedFile() {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setFileInputKey(value => value + 1);
+  }
+
   const onSubmit = async (values: UpdateProfileInput) => {
     clearErrors();
     setProfileImageError(null);
-    setLoading(true);
 
     try {
-      const formData = new FormData();
-      formData.append('firstName', cleanString(values.firstName));
-      formData.append('lastName', cleanString(values.lastName));
-
-      if (selectedFile) {
-        formData.append('profileImage', selectedFile);
-      }
-
-      const response = await fetch('/api/account/profile', {
-        method: 'PATCH',
-        body: formData,
-        credentials: 'include',
-      });
-
-      const body = (await response
-        .json()
-        .catch(() => null)) as AccountProfileResponse | null;
+      const response = await updateProfile(values, selectedFile);
+      const body = response.body;
 
       if (!response.ok) {
         if (response.status === 400 && body?.fields) {
@@ -180,11 +167,7 @@ export default function AccountProfileForm({
         setStoreUser(body.user);
       }
 
-      setSelectedFile(null);
-      setPreviewUrl(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      resetSelectedFile();
 
       toast.success(body?.message ?? 'Profile updated successfully.');
     } catch (error) {
@@ -193,8 +176,6 @@ export default function AccountProfileForm({
           ? error.message
           : 'Unable to update your profile.',
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -248,6 +229,7 @@ export default function AccountProfileForm({
                 </div>
 
                 <input
+                  key={fileInputKey}
                   ref={fileInputRef}
                   type='file'
                   accept='image/jpeg,image/png,image/webp'
@@ -308,8 +290,8 @@ export default function AccountProfileForm({
               <p className='mt-1 text-sm font-medium'>{user.email}</p>
             </div>
 
-            <Button type='submit' disabled={loading}>
-              {loading ? 'Saving profile...' : 'Save changes'}
+            <Button type='submit' disabled={isUpdating}>
+              {isUpdating ? 'Saving profile...' : 'Save changes'}
             </Button>
           </form>
         </Form>

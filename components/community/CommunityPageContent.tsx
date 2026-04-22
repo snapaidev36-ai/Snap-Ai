@@ -9,40 +9,25 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronRight } from '@/lib/icons';
-import { apiClient } from '@/lib/client/api';
+import {
+  type CommunityApiItem,
+  useCommunityFeed,
+} from '@/lib/hooks/useCommunityFeed';
 import { formatDate } from '@/lib/helpers';
-
-type CommunityApiItem = {
-  id: string;
-  prompt: string;
-  creditsDeducted: number;
-  creditsBefore: number;
-  creditsAfter: number;
-  aspectRatio: '1:1' | '4:3' | '9:16' | '16:9';
-  style: 'photoreal' | 'cinematic' | 'anime' | 'digital art';
-  imageUrl: string;
-  createdAt: string;
-  user: {
-    firstName: string;
-    lastName: string;
-  };
-};
-
-type CommunityResponse = {
-  items: CommunityApiItem[];
-  nextCursor: string | null;
-};
 
 function getAuthorName(user: CommunityApiItem['user']) {
   return `${user.firstName} ${user.lastName}`.trim();
 }
 
 export default function CommunityPageContent() {
-  const [items, setItems] = useState<CommunityApiItem[]>([]);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const {
+    items,
+    nextCursor,
+    isLoading,
+    isLoadingMore,
+    errorMessage,
+    loadMore,
+  } = useCommunityFeed();
   const [selectedItem, setSelectedItem] = useState<CommunityApiItem | null>(
     null,
   );
@@ -86,80 +71,6 @@ export default function CommunityPageContent() {
   function handlePreviewOpenChange(open: boolean) {
     if (!open) {
       closePreview();
-    }
-  }
-
-  useEffect(() => {
-    let active = true;
-
-    async function loadCommunityFeed() {
-      setIsLoading(true);
-      setErrorMessage(null);
-
-      try {
-        const response = await apiClient<CommunityResponse>(
-          '/api/community?limit=18',
-          {
-            skipAuthRefresh: true,
-          },
-        );
-
-        if (!active) {
-          return;
-        }
-
-        setItems(response.items);
-        setNextCursor(response.nextCursor);
-      } catch (error) {
-        if (!active) {
-          return;
-        }
-
-        setErrorMessage(
-          error instanceof Error
-            ? error.message
-            : 'Unable to load the community feed right now.',
-        );
-      } finally {
-        if (active) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadCommunityFeed();
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  async function handleLoadMore() {
-    if (!nextCursor || isLoadingMore) {
-      return;
-    }
-
-    setIsLoadingMore(true);
-    setErrorMessage(null);
-
-    try {
-      const response = await apiClient<CommunityResponse>(
-        `/api/community?limit=18&cursor=${encodeURIComponent(nextCursor)}`,
-        {
-          skipAuthRefresh: true,
-        },
-      );
-
-      setItems(previousItems => [...previousItems, ...response.items]);
-      setNextCursor(response.nextCursor);
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'Unable to load more community images right now.',
-      );
-    } finally {
-      setIsLoadingMore(false);
     }
   }
 
@@ -272,7 +183,7 @@ export default function CommunityPageContent() {
 
         {nextCursor ? (
           <div className='flex justify-center'>
-            <Button type='button' variant='outline' onClick={handleLoadMore}>
+            <Button type='button' variant='outline' onClick={loadMore}>
               {isLoadingMore ? 'Loading more...' : 'Load more'}
             </Button>
           </div>

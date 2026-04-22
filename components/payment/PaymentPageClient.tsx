@@ -1,15 +1,12 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckIcon, Sparkles } from '@/lib/icons';
+import { useStripeCheckout } from '@/lib/hooks/useStripeCheckout';
 import { fadeUp, pageContainer, sectionContainer } from '@/lib/motion/variants';
 
 export type PaymentPlanCard = {
@@ -27,56 +24,14 @@ type PaymentPageClientProps = {
 };
 
 export default function PaymentPageClient({ plans }: PaymentPageClientProps) {
-  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
-  const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
   const motionEnabled = !prefersReducedMotion;
+  const { pendingPlan, handleCheckout } = useStripeCheckout();
 
   const planHighlights: Record<PaymentPlanCard['key'], string[]> = {
     basic: ['Fast checkout', '100 starter credits', 'Great for testing'],
     standard: ['Most popular choice', '300 credits included', 'Balanced value'],
     premium: ['Large credit bundle', 'Best for heavy use', 'Priority scale'],
-  };
-
-  const handleCheckout = async (planKey: PaymentPlanCard['key']) => {
-    setPendingPlan(planKey);
-
-    try {
-      const response = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ planKey }),
-      });
-
-      const payload = (await response.json()) as {
-        checkoutUrl?: string;
-        error?: string;
-      };
-
-      if (response.status === 401) {
-        router.push('/login?next=/pricing');
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error(payload.error ?? 'Unable to start checkout');
-      }
-
-      if (!payload.checkoutUrl) {
-        throw new Error('Stripe did not return a checkout URL');
-      }
-
-      window.location.assign(payload.checkoutUrl);
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'Unable to start checkout',
-      );
-    } finally {
-      setPendingPlan(null);
-    }
   };
 
   return (
