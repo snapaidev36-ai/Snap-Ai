@@ -57,7 +57,7 @@ export const socialLinks = [
   },
   {
     name: 'Instagram',
-    url: 'https://www.instagram.com/gensnapai',
+    url: 'https://www.instagram.com/quantelyx.ai',
     icon: InstagramIcon,
   },
 ];

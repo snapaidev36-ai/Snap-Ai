@@ -121,16 +121,17 @@ export default function CommunityPageContent() {
       <div className='relative overflow-hidden rounded-4xl border border-border/70 bg-[radial-gradient(circle_at_top_right,rgba(130,255,115,0.18),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.8),rgba(130,255,115,0.08))] p-6 shadow-sm sm:p-8 dark:bg-[radial-gradient(circle_at_top_right,rgba(130,255,115,0.16),transparent_30%),linear-gradient(135deg,rgba(19,19,19,0.96),rgba(130,255,115,0.07))]'>
         <div className='relative space-y-4'>
           <div className='flex flex-wrap items-center gap-2'>
-            <Badge variant='secondary'>Community feed</Badge>
-            <Badge variant='outline'>Public preview</Badge>
+            <Badge variant='secondary'>Community showcase</Badge>
+            <Badge variant='outline'>Fresh inspiration</Badge>
           </div>
           <div className='max-w-3xl space-y-2'>
             <h1 className='text-3xl font-semibold tracking-tight sm:text-5xl'>
-              Community creations with a subtle Snap AI watermark.
+              See what the community is creating right now.
             </h1>
             <p className='text-muted-foreground text-sm leading-6 sm:text-base'>
-              Browse the latest user generations. Each preview is proxied
-              through Snap AI and composited with a branded watermark.
+              Browse standout generations from across Snap AI, discover new
+              visual directions, and find ideas worth trying in your next
+              prompt.
             </p>
           </div>
         </div>
@@ -187,9 +188,12 @@ export default function CommunityPageContent() {
           </div>
         ) : (
           <div className='rounded-[1.75rem] border border-dashed border-border/70 bg-muted/20 px-6 py-10 text-center'>
-            <p className='text-lg font-semibold'>No public creations yet.</p>
+            <p className='text-lg font-semibold'>
+              The community feed is warming up.
+            </p>
             <p className='text-muted-foreground mt-2 text-sm'>
-              As soon as users generate images, the feed will begin to fill.
+              As soon as people start sharing, this space will fill with fresh
+              work, new styles, and ideas to spark your next generation.
             </p>
           </div>
         )}

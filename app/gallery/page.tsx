@@ -10,9 +10,9 @@ import {
 } from '@/lib/sidebar/cookies';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Your gallery',
+  title: 'Your creative gallery',
   description:
-    'Review the images and generations saved in your Snap AI workspace.',
+    'Review your Snap AI creations in a private gallery built to revisit, compare, and refine your best generations.',
   path: '/gallery',
   noindex: true,
   keywords: ['gallery', 'saved images', 'workspace'],

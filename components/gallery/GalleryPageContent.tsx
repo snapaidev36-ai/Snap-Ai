@@ -110,15 +110,17 @@ export default function GalleryPageContent() {
         <div className='absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(130,255,115,0.16),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(130,255,115,0.09),transparent_26%)]' />
         <div className='relative space-y-4'>
           <div className='flex flex-wrap items-center gap-2'>
-            <Badge variant='secondary'>Gallery</Badge>
+            <Badge variant='secondary'>Creative archive</Badge>
+            <Badge variant='outline'>Private collection</Badge>
           </div>
           <div className='max-w-2xl space-y-2'>
             <h1 className='text-3xl font-semibold tracking-tight sm:text-4xl'>
-              Your generated images, delivered privately.
+              Your best creations, gathered in one calm place.
             </h1>
             <p className='text-muted-foreground text-sm leading-6 sm:text-base'>
-              This view uses the Next.js proxy route, so your image URLs stay
-              server-controlled while the gallery loads quickly and securely.
+              Revisit the images you have made, compare ideas side by side, and
+              keep your favorite generations close whenever you want to return
+              to them.
             </p>
           </div>
         </div>
@@ -166,9 +168,12 @@ export default function GalleryPageContent() {
         </div>
       ) : (
         <div className='rounded-[1.75rem] border border-dashed border-border/70 bg-muted/20 px-6 py-10 text-center'>
-          <p className='text-lg font-semibold'>No generated images yet.</p>
+          <p className='text-lg font-semibold'>
+            Your gallery is waiting for its first piece.
+          </p>
           <p className='text-muted-foreground mt-2 text-sm'>
-            Once you create an image, it will appear here automatically.
+            Create an image and it will appear here automatically, ready to
+            revisit, download, and build on.
           </p>
         </div>
       )}

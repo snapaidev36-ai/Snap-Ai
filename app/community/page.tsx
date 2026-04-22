@@ -10,9 +10,9 @@ import {
 } from '@/lib/sidebar/cookies';
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Community gallery',
+  title: 'Community showcase',
   description:
-    'Explore community-created images and shared inspiration inside Snap AI.',
+    'Explore community-made images, discover fresh inspiration, and see how other creators are using Snap AI.',
   path: '/community',
   noindex: true,
   keywords: ['community', 'gallery', 'shared creations'],
