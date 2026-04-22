@@ -1,12 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import GeneratedImageGridSkeleton from '@/components/media/GeneratedImageGridSkeleton';
+import ImagePromptPreviewModal from '@/components/media/ImagePromptPreviewModal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ChevronRight } from '@/lib/icons';
 import { apiClient } from '@/lib/client/api';
 import { formatDate } from '@/lib/helpers';
 
@@ -33,8 +35,50 @@ export default function GalleryPageContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<GalleryApiItem | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const hasItems = items.length > 0;
+  const PROMPT_PREVIEW_LIMIT = 180;
+
+  function closePreview() {
+    setIsPreviewOpen(false);
+  }
+
+  function openPreview(item: GalleryApiItem) {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+
+    setSelectedItem(item);
+    setIsPreviewOpen(true);
+  }
+
+  useEffect(() => {
+    if (isPreviewOpen || !selectedItem) {
+      return;
+    }
+
+    closeTimerRef.current = setTimeout(() => {
+      setSelectedItem(null);
+      closeTimerRef.current = null;
+    }, 220);
+
+    return () => {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
+    };
+  }, [isPreviewOpen, selectedItem]);
+
+  function handlePreviewOpenChange(open: boolean) {
+    if (!open) {
+      closePreview();
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -159,9 +203,25 @@ export default function GalleryPageContent() {
                 </p>
               </CardHeader>
               <CardContent className='px-4 pb-4'>
-                <p className='text-muted-foreground text-sm leading-6'>
-                  {item.prompt}
-                </p>
+                <div className='space-y-3'>
+                  <p className='text-muted-foreground line-clamp-4 text-sm leading-6'>
+                    {item.prompt.length > PROMPT_PREVIEW_LIMIT
+                      ? `${item.prompt.slice(0, PROMPT_PREVIEW_LIMIT).trimEnd()}...`
+                      : item.prompt}
+                  </p>
+
+                  {item.prompt.length > PROMPT_PREVIEW_LIMIT ? (
+                    <Button
+                      type='button'
+                      variant='ghost'
+                      className='flex flex-wrap items-center gap-2 px-0 text-sm font-medium text-foreground/80 hover:text-foreground'
+                      aria-label='Open prompt preview'
+                      onClick={() => openPreview(item)}>
+                      Read more
+                      <ChevronRight size={14} />
+                    </Button>
+                  ) : null}
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -185,6 +245,33 @@ export default function GalleryPageContent() {
           </Button>
         </div>
       ) : null}
+
+      <ImagePromptPreviewModal
+        open={isPreviewOpen}
+        onOpenChange={handlePreviewOpenChange}
+        title={selectedItem ? 'Prompt preview' : ''}
+        description={
+          selectedItem
+            ? `${formatDate(selectedItem.createdAt)} · ${selectedItem.aspectRatio}`
+            : ''
+        }
+        badge={selectedItem?.style ?? 'cinematic'}
+        imageUrl={selectedItem?.imageUrl ?? '/placeholder-image.png'}
+        imageAlt={selectedItem?.prompt ?? 'Generated image preview'}
+        prompt={selectedItem?.prompt ?? 'Prompt not available'}
+        details={
+          selectedItem
+            ? [
+                { label: 'Style', value: selectedItem.style },
+                { label: 'Aspect ratio', value: selectedItem.aspectRatio },
+                {
+                  label: 'Credits used',
+                  value: `${selectedItem.creditsDeducted}`,
+                },
+              ]
+            : []
+        }
+      />
     </div>
   );
 }

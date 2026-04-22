@@ -1,12 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import GeneratedImageGridSkeleton from '@/components/media/GeneratedImageGridSkeleton';
+import ImagePromptPreviewModal from '@/components/media/ImagePromptPreviewModal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChevronRight } from '@/lib/icons';
 import { apiClient } from '@/lib/client/api';
 import { formatDate } from '@/lib/helpers';
 
@@ -41,6 +43,51 @@ export default function CommunityPageContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<CommunityApiItem | null>(
+    null,
+  );
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const PROMPT_PREVIEW_LIMIT = 180;
+
+  function closePreview() {
+    setIsPreviewOpen(false);
+  }
+
+  function openPreview(item: CommunityApiItem) {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+
+    setSelectedItem(item);
+    setIsPreviewOpen(true);
+  }
+
+  useEffect(() => {
+    if (isPreviewOpen || !selectedItem) {
+      return;
+    }
+
+    closeTimerRef.current = setTimeout(() => {
+      setSelectedItem(null);
+      closeTimerRef.current = null;
+    }, 220);
+
+    return () => {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
+    };
+  }, [isPreviewOpen, selectedItem]);
+
+  function handlePreviewOpenChange(open: boolean) {
+    if (!open) {
+      closePreview();
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -179,9 +226,34 @@ export default function CommunityPageContent() {
                   </p>
                 </CardHeader>
                 <CardContent className='px-4 pb-4'>
-                  <p className='text-muted-foreground text-sm leading-6'>
-                    {item.prompt}
-                  </p>
+                  <div className='space-y-3'>
+                    <p className='text-muted-foreground line-clamp-4 text-sm leading-6'>
+                      {item.prompt.length > PROMPT_PREVIEW_LIMIT
+                        ? `${item.prompt.slice(0, PROMPT_PREVIEW_LIMIT).trimEnd()}...`
+                        : item.prompt}
+                    </p>
+
+                    {item.prompt.length > PROMPT_PREVIEW_LIMIT ? (
+                      <div className='flex flex-wrap items-center gap-2'>
+                        <Button
+                          type='button'
+                          variant='ghost'
+                          className='h-8 px-0 text-sm font-medium text-foreground/80 hover:text-foreground'
+                          onClick={() => openPreview(item)}>
+                          Read more
+                        </Button>
+                        <Button
+                          type='button'
+                          size='icon-sm'
+                          variant='outline'
+                          className='rounded-full'
+                          aria-label='Open prompt preview'
+                          onClick={() => openPreview(item)}>
+                          <ChevronRight size={14} />
+                        </Button>
+                      </div>
+                    ) : null}
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -205,6 +277,34 @@ export default function CommunityPageContent() {
             </Button>
           </div>
         ) : null}
+
+        <ImagePromptPreviewModal
+          open={isPreviewOpen}
+          onOpenChange={handlePreviewOpenChange}
+          title={selectedItem ? getAuthorName(selectedItem.user) : ''}
+          description={
+            selectedItem
+              ? `Shared ${formatDate(selectedItem.createdAt)} · ${selectedItem.aspectRatio}`
+              : ''
+          }
+          badge={selectedItem?.style ?? ''}
+          imageUrl={selectedItem?.imageUrl ?? ''}
+          imageAlt={selectedItem?.prompt ?? 'Community image preview'}
+          prompt={selectedItem?.prompt ?? ''}
+          details={
+            selectedItem
+              ? [
+                  { label: 'Style', value: selectedItem.style },
+                  { label: 'Aspect ratio', value: selectedItem.aspectRatio },
+                  {
+                    label: 'Credits used',
+                    value: `${selectedItem.creditsDeducted}`,
+                  },
+                  { label: 'Creator', value: getAuthorName(selectedItem.user) },
+                ]
+              : []
+          }
+        />
       </div>
     </section>
   );
