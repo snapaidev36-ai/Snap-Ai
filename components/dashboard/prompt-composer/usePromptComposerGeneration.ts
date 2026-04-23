@@ -39,6 +39,7 @@ export function usePromptComposerGeneration() {
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
 
   const pollingTimeoutRef = useRef<number | null>(null);
+  const recoveryTimeoutRef = useRef<number | null>(null);
   const activeUsageIdRef = useRef<string | null>(null);
   const isMountedRef = useRef(false);
 
@@ -46,6 +47,13 @@ export function usePromptComposerGeneration() {
     if (pollingTimeoutRef.current) {
       window.clearTimeout(pollingTimeoutRef.current);
       pollingTimeoutRef.current = null;
+    }
+  }
+
+  function clearRecoveryTimer() {
+    if (recoveryTimeoutRef.current) {
+      window.clearTimeout(recoveryTimeoutRef.current);
+      recoveryTimeoutRef.current = null;
     }
   }
 
@@ -225,12 +233,19 @@ export function usePromptComposerGeneration() {
 
     const recoveryRecord = readGenerationRecoveryRecord();
     if (recoveryRecord) {
-      restoreRecoveryRecord(recoveryRecord);
+      recoveryTimeoutRef.current = window.setTimeout(() => {
+        if (!isMountedRef.current) {
+          return;
+        }
+
+        restoreRecoveryRecord(recoveryRecord);
+      }, 0);
     }
 
     return () => {
       isMountedRef.current = false;
       clearPollingTimer();
+      clearRecoveryTimer();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
