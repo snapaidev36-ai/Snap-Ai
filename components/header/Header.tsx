@@ -30,7 +30,7 @@ const Header: React.FC<AiHeader2Props> = () => {
     router.push(user ? '/dashboard' : '/login');
   }
   return (
-    <div className='fixed z-50 lg:z-20 lg:relative bg-[#FAFAFA] lg:bg-transparent top-0 w-full flex items-center justify-between px-5 lg:px-8 py-4 lg:py-8'>
+    <header className='fixed z-50 lg:z-20 lg:relative bg-[#FAFAFA] lg:bg-transparent top-0 w-full max-w-346.25 mx-auto flex items-center justify-between px-5 lg:px-8 py-4 lg:py-8'>
       <div className='flex items-center gap-6'>
         <Link href='/'>
           <Image
@@ -62,7 +62,7 @@ const Header: React.FC<AiHeader2Props> = () => {
       <Button onClick={handlePrimaryAction} disabled={!initialized}>
         {primaryActionLabel}
       </Button>
-    </div>
+    </header>
   );
 };
 

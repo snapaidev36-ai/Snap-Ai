@@ -5,21 +5,18 @@ export const steps = [
     title: 'Describe Your Vision',
     description:
       'Write a detailed description of the image you want to create.',
-    imageSrc:
-      'https://res.cloudinary.com/da2yfyikz/image/upload/v1734629642/AI%20Suite/landing-page-steps-01_qlyjy1.png',
+    imageSrc: '/home/landing-page-steps-01.png',
   },
   {
     title: 'Choose Your Style',
     description: 'Select an artistic style that fits your creative idea.',
-    imageSrc:
-      'https://res.cloudinary.com/da2yfyikz/image/upload/v1734629642/AI%20Suite/landing-page-steps-02_x96xdm.png',
+    imageSrc: '/home/landing-page-steps-02.png',
   },
   {
     title: 'Generate and Download',
     description:
       'Let the AI create your image. Preview it, and download instantly!',
-    imageSrc:
-      'https://res.cloudinary.com/da2yfyikz/image/upload/v1734629642/AI%20Suite/landing-page-steps-03_t2fsuz.png',
+    imageSrc: '/home/landing-page-steps-03.png',
   },
 ];
 
@@ -29,8 +26,7 @@ export const sections = [
     description:
       'Design like never before! With or without prompts, creating stunning visuals is now effortless. Your imagination has no limits.',
     buttonText: 'Generate Magic',
-    imageSrc:
-      'https://res.cloudinary.com/da2yfyikz/image/upload/v1734594538/AI%20Suite/landingPageTools-01_cadjnt.jpg',
+    imageSrc: '/home/landing-page-tools-03.png',
     imageOrder: 'normal',
   },
   {
