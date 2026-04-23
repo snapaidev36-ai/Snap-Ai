@@ -3,6 +3,7 @@ node_modules/
 
 # next.js build output
 .next/
+.open-next/
 out/
 
 # misc build artifacts

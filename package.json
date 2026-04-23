@@ -5,9 +5,8 @@
   "scripts": {
     "dev": "prisma generate && next dev -p 8001",
     "build": "prisma generate && next build",
-    "postbuild": "npx @opennextjs/cloudflare build",
-    "deploy": "npx @opennextjs/cloudflare deploy",
-    "preview": "npx @opennextjs/cloudflare preview",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "start": "next start",
     "lint": "eslint && npm run lint:viewport",
     "lint:viewport": "node scripts/check-no-vh.mjs",
