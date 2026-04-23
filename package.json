@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "prisma generate && next dev -p 8001",
-    "build": "prisma generate && next build && npx @cloudflare/next-on-pages",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint && npm run lint:viewport",
     "lint:viewport": "node scripts/check-no-vh.mjs",
