@@ -3,7 +3,6 @@ node_modules/
 
 # next.js build output
 .next/
-.open-next/
 out/
 
 # misc build artifacts
@@ -12,7 +11,6 @@ next-env.d.ts
 
 # env files
 .env*
-.dev.vars
 
 # logs
 npm-debug.log*
